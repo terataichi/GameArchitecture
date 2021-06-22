@@ -79,24 +79,55 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		constexpr size_t blockSize = 32;
 		auto count = 720 / blockSize;
 		int base_y = 240;
-		int sine_amp = 100.0f;
+		int sine_amp = 50.0f;
+
+		Vector2 lastDelta90Vectors[2] = { Vector2::Zero(),Vector2::Zero() };
+
+
 		int x = 0;
 		int y = base_y;
+		Position2 currentPos(x,y);
 		for (int i = 0; i < count; i++)
 		{
 			float nextX = i * blockSize;
-			float nextY = base_y + sine_amp * sinf((nextX * 0.5f + frameForAngle) / 180.0f * DX_PI_F);
+			float nextY = sine_amp * sinf((nextX * 0.5f + frameForAngle) / 180.0f * DX_PI_F);
 			//DrawLineAA(x,y,nextX,nextY,0xff,5.0f);
-			DrawRectModiGraph(x, y,
-				nextX, nextY,
-				nextX, nextY + blockSize,
-				x, y + blockSize,
+
+			// 次までのベクトル
+			auto deltaVec = Vector2(blockSize, nextY).Normalized() * blockSize;
+
+			auto nextPos = currentPos + Vector2{ blockSize,nextY }.Normalized() * blockSize;
+
+
+			auto middleVec1 = deltaVec.Rotated90();
+			auto middleVecR = deltaVec;
+			if (!(lastDelta90Vectors[0] == Vector2::Zero()))
+			{
+				middleVecR = (middleVec1 + lastDelta90Vectors[0]).Normalized() * blockSize;
+			}
+			auto middleVecL = lastDelta90Vectors[0];
+			if (!(lastDelta90Vectors[1] == Vector2::Zero()))
+			{
+				middleVecL = (middleVecL + lastDelta90Vectors[1]).Normalized() * blockSize;
+			}
+			lastDelta90Vectors[1] = lastDelta90Vectors[0];
+			lastDelta90Vectors[0] = deltaVec.Rotated90();
+
+			auto middlePosL = currentPos + middleVecL;
+			auto middlePosR = nextPos + middleVecR;
+
+			auto rightPos = nextPos + deltaVec.Rotated90();
+			auto leftPos = currentPos + deltaVec.Rotated90();
+
+			DrawRectModiGraph(currentPos.x, currentPos.y,
+				nextPos.x, nextPos.y,
+				middlePosR.x, middlePosR.y,
+				middlePosL.x, middlePosL.y,
 				48,0,
 				16,16,
 				handle, true);
 
-			x = nextX;
-			y = nextY;
+			currentPos = nextPos;
 		}
 		// 基準が右向き
 

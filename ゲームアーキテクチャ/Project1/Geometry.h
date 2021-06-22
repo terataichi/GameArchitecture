@@ -24,10 +24,15 @@ struct Vector2 {
 	Vector2 Normalized();
 
 	void Rotate90();
-
+	Vector2 Rotated90();
 	void operator+=(const Vector2& v);
 	void operator-=(const Vector2& v);
 	void operator*=(float scale);
+
+	static const Vector2 Zero()
+	{
+		return { 0.0f,0.0f };
+	}
 	Vector2 operator*(float scale);
 	Vector2 operator-() {
 		return Vector2(-x, -y);

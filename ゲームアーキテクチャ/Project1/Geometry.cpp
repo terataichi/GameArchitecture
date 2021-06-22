@@ -77,6 +77,11 @@ void Vector2::Rotate90()
 	x = -x;
 }
 
+Vector2 Vector2::Rotated90()
+{
+	return { -y,x };
+}
+
 
 ///“àÏ‚ğ•Ô‚·
 float
