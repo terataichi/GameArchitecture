@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		return false;
 	}
 
-	int handle = LoadGraph(L"image/Assets.png", true);
+	int handle = LoadGraph(L"image/arrow2.png", true);
 	Vector2 offset{16,35 };
 
 	
@@ -76,14 +76,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		lastMouseInput = mouseinput;
 
-		constexpr size_t blockSize = 32;
-		auto count = 720 / blockSize;
+		constexpr size_t blockSize = 16;
+		constexpr size_t width = 1000;
+
+		auto count = width / blockSize;
+
+		float weidth = 800.0f / static_cast<float>(width);
+
 		int base_y = 240;
-		int sine_amp = 50.0f;
+		int sine_amp = 30;
 
-		Vector2 lastDelta90Vectors[2] = { Vector2::Zero(),Vector2::Zero() };
-
-
+		Vector2 lastDelta90Vectors[2] = { Vector2::ZERO,Vector2::ZERO };
+		Position2 lastPos = Vector2::ZERO;
 		int x = 0;
 		int y = base_y;
 		Position2 currentPos(x,y);
@@ -91,22 +95,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			float nextX = i * blockSize;
 			float nextY = sine_amp * sinf((nextX * 0.5f + frameForAngle) / 180.0f * DX_PI_F);
+			float offset = 50.0f * sinf((100 + frameForAngle) / 180.0f * DX_PI_F);
 			//DrawLineAA(x,y,nextX,nextY,0xff,5.0f);
 
 			// 次までのベクトル
 			auto deltaVec = Vector2(blockSize, nextY).Normalized() * blockSize;
 
-			auto nextPos = currentPos + Vector2{ blockSize,nextY }.Normalized() * blockSize;
+			auto nextPos = currentPos + deltaVec;
 
 
 			auto middleVec1 = deltaVec.Rotated90();
 			auto middleVecR = deltaVec;
-			if (!(lastDelta90Vectors[0] == Vector2::Zero()))
+			if (!(lastDelta90Vectors[0] == Vector2::ZERO))
 			{
 				middleVecR = (middleVec1 + lastDelta90Vectors[0]).Normalized() * blockSize;
 			}
 			auto middleVecL = lastDelta90Vectors[0];
-			if (!(lastDelta90Vectors[1] == Vector2::Zero()))
+			if (!(lastDelta90Vectors[1] == Vector2::ZERO))
 			{
 				middleVecL = (middleVecL + lastDelta90Vectors[1]).Normalized() * blockSize;
 			}
@@ -119,14 +124,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			auto rightPos = nextPos + deltaVec.Rotated90();
 			auto leftPos = currentPos + deltaVec.Rotated90();
 
-			DrawRectModiGraph(currentPos.x, currentPos.y,
-				nextPos.x, nextPos.y,
-				middlePosR.x, middlePosR.y,
-				middlePosL.x, middlePosL.y,
-				48,0,
-				16,16,
-				handle, true);
+			if (lastPos == Vector2::ZERO)
+			{
+				auto middlePosL = currentPos + middleVecL;
+				auto middlePosR = nextPos + middleVecR;
 
+				DrawRectModiGraph(currentPos.x, currentPos.y + offset,
+					nextPos.x, nextPos.y + offset,
+					middlePosR.x, middlePosR.y + offset,
+					middlePosL.x, middlePosL.y + offset,
+					i* blockSize* weidth, 0,
+					blockSize, 64,
+					handle, true);
+			}
+			else
+			{
+				auto middlePosL = lastPos + middleVecL;
+				auto middlePosR = currentPos + middleVecR;
+
+				DrawRectModiGraph(lastPos.x, lastPos.y + offset,
+					currentPos.x, currentPos.y + offset,
+					middlePosR.x, middlePosR.y + offset,
+					middlePosL.x, middlePosL.y + offset,
+					i * blockSize * weidth, 0,
+					blockSize, 64,
+					handle, true);
+			}
+
+			lastPos = currentPos;
 			currentPos = nextPos;
 		}
 		// 基準が右向き

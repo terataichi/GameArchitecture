@@ -3,6 +3,8 @@
 #include<cmath>
 #include <algorithm>
 
+const Vector2 Vector2::ZERO = { 0.0f,0.0f };
+
 void
 Rect::Draw() {
 	DxLib::DrawBox(Left()*2, Top()*2, Right()*2, Bottom()*2, 0xffffffff, false);

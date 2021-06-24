@@ -29,10 +29,8 @@ struct Vector2 {
 	void operator-=(const Vector2& v);
 	void operator*=(float scale);
 
-	static const Vector2 Zero()
-	{
-		return { 0.0f,0.0f };
-	}
+	static const Vector2 ZERO;
+
 	Vector2 operator*(float scale);
 	Vector2 operator-() {
 		return Vector2(-x, -y);
