@@ -76,22 +76,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		lastMouseInput = mouseinput;
 
+
+
+		float arrW, arrH;
+		GetGraphSizeF(handle, &arrW, &arrH);
 		constexpr size_t blockSize = 16;
-		constexpr size_t width = 1000;
+		constexpr size_t width = 500;
 
 		auto count = width / blockSize;
 
-		float weidth = 800.0f / static_cast<float>(width);
+		float weidth = arrW / static_cast<float>(width);
 
 		int base_y = 240;
-		int sine_amp = 30;
+		int sine_amp = 20;
 
 		Vector2 lastDelta90Vectors[2] = { Vector2::ZERO,Vector2::ZERO };
 		Position2 lastPos = Vector2::ZERO;
 		int x = 0;
 		int y = base_y;
 		Position2 currentPos(x,y);
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i <= count; i++)
 		{
 			float nextX = i * blockSize;
 			float nextY = sine_amp * sinf((nextX * 0.5f + frameForAngle) / 180.0f * DX_PI_F);
@@ -134,7 +138,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					middlePosR.x, middlePosR.y + offset,
 					middlePosL.x, middlePosL.y + offset,
 					i* blockSize* weidth, 0,
-					blockSize, 64,
+					blockSize * weidth, 64,
 					handle, true);
 			}
 			else
@@ -147,7 +151,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 					middlePosR.x, middlePosR.y + offset,
 					middlePosL.x, middlePosL.y + offset,
 					i * blockSize * weidth, 0,
-					blockSize, 64,
+					blockSize * weidth, 64,
 					handle, true);
 			}
 
