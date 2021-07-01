@@ -125,8 +125,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			auto middlePosL = currentPos + middleVecL;
 			auto middlePosR = nextPos + middleVecR;
 
-			auto rightPos = nextPos + deltaVec.Rotated90();
-			auto leftPos = currentPos + deltaVec.Rotated90();
+			//auto rightPos = nextPos + deltaVec.Rotated90();
+			//auto leftPos = currentPos + deltaVec.Rotated90();
 
 			if (lastPos == Vector2::ZERO)
 			{
