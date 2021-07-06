@@ -7,7 +7,7 @@ struct Size {
 	float h;//高さ
 };
 
-//座標を表す構造体
+//2D座標・ベクトルを表す構造体
 struct Vector2 {
 	Vector2():x(0),y(0){}
 	Vector2(float inx,float iny):x(inx),y(iny){}
@@ -15,15 +15,22 @@ struct Vector2 {
 	///ベクトルの大きさを返します
 	float Magnitude()const;
 	
+	float SQMagnitude()const;
+
 	///正規化(大きさを１に)します
 	void Normalize();
 
 	///正規化ベクトルを返します
 	Vector2 Normalized();
 
+	void Rotate90();
+	Vector2 Rotated90();
 	void operator+=(const Vector2& v);
 	void operator-=(const Vector2& v);
 	void operator*=(float scale);
+
+	static const Vector2 ZERO;
+
 	Vector2 operator*(float scale);
 	Vector2 operator-() {
 		return Vector2(-x, -y);
@@ -32,6 +39,8 @@ struct Vector2 {
 
 Vector2 operator+(const Vector2& va, const Vector2 vb);
 Vector2 operator-(const Vector2& va, const Vector2 vb);
+Vector2 operator/(const Vector2& va, const Vector2 vb);
+bool operator == (const Vector2& va, const Vector2 vb);
 
 ///内積を返す
 float Dot(const Vector2& va, const Vector2& vb);
@@ -49,6 +58,48 @@ float operator%(const Vector2& va, const Vector2& vb);
 //Positionのほうがよくね？って理由でこの名前
 typedef Vector2 Position2;
 
+
+//3D座標・ベクトルを表す構造体
+struct Vector3 {
+	Vector3() :x(0), y(0) ,z(0){}
+	Vector3(float inx, float iny,float inz) :x(inx), y(iny) ,z(inz){}
+	float x, y,z;
+	///ベクトルの大きさを返します
+	float Magnitude()const;
+
+	///正規化(大きさを１に)します
+	void Normalize();
+
+	///正規化ベクトルを返します
+	Vector3 Normalized();
+
+	void operator+=(const Vector3& v);
+	void operator-=(const Vector3& v);
+	void operator*=(float scale);
+	Vector3 operator*(float scale)const;
+	Vector3 operator*(const Vector3& v)const;
+
+	Vector3 operator-() {
+		return Vector3(-x, -y,-z);
+	}
+};
+Vector3 operator+(const Vector3& va, const Vector3 vb);
+Vector3 operator-(const Vector3& va, const Vector3 vb);
+
+///内積を返す
+float Dot(const Vector3& va, const Vector3& vb);
+
+///外積を返す
+Vector3 Cross(const Vector3& va, const Vector3& vb);
+
+///内積演算子
+float operator*(const Vector3& va, const Vector3& vb);
+
+///外積演算子
+Vector3 operator%(const Vector3& va, const Vector3& vb);
+typedef Vector3 Position3;
+
+///円を表す構造体
 struct Circle {
 	float radius;//半径
 	Position2 pos; //中心座標
@@ -56,6 +107,24 @@ struct Circle {
 	Circle(float r, Position2& p) :radius(r), pos(p) {}
 };
 
+
+///球を表す構造体
+struct Sphere {
+	float radius;//半径
+	Position3 pos; //中心座標
+	Sphere() :radius(0), pos(0, 0,0) {}
+	Sphere(float r, Position3& p) :radius(r), pos(p) {}
+};
+
+/// 平面
+struct Plane
+{
+	Vector3 N; //法線ベクトル
+	float b; //原点からのオフセット
+	Plane(const Vector3& n, float offset = 0.0);
+};
+
+///矩形を表す構造体
 struct Rect {
 	Position2 pos; //中心座標
 	int w, h;//幅,高さ
