@@ -121,6 +121,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// プレイヤーのホーミング弾の処理
 		for (auto& hshot : homingShots)
 		{
+			// アクティブかどうか
 			if (hshot.isActive)
 			{
 				hshot.pos += hshot.vel;
@@ -151,12 +152,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawCircleAA(enemypos.x, enemypos.y, 50.0f, 16, 0x00ff00, false);
 
-		int pidx = (frame/4 % 2)*5+3;
+		int pidx = (frame / 4 % 2) * 5 + 3;
 		DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
 		if (isDebugMode) {
 			//自機の本体(当たり判定)
 			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
 		}
+
+		// パフォーマンス計測
+		int dCallCnt = GetDrawCallCount();
+		float fps = GetFPS();
+
+		DrawFormatString(11, 51, 0x000000, "DrawCall=%d", dCallCnt);
+		DrawFormatString(10, 50, 0xff0000, "DrawCall=%d", dCallCnt);
+		DrawFormatString(11, 101, 0x000000, "Fps=%f", fps);
+		DrawFormatString(10, 100, 0xff0000, "Fps=%f", fps);
 
 		//弾発射
 		if (frame % 12 == 0) {
