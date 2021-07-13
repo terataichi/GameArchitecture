@@ -51,7 +51,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Bullet bullets[256];
 
 	// プレイヤーのホーミング弾
-	Bullet homingShots[10];
+	Bullet homingShots[100];
 
 	Position2 enemypos(320,25);//敵座標
 	Position2 playerpos(320, 400);//自機座標
