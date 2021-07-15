@@ -1,6 +1,7 @@
 #include<DxLib.h>
 #include<cmath>
 #include <memory>
+#include <list>
 #include"Geometry.h"
 
 ///当たり判定関数
@@ -20,6 +21,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		return -1;
 	}
 	SetDrawScreen(DX_SCREEN_BACK);
+
+	std::list<Position2>;
 
 	//背景用
 	int bgH[4];
@@ -65,11 +68,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int skyy = 0;
 	int skyy2 = 0;
 	int bgidx = 0;
-	constexpr float homingShotSpeed = 5.0f;
+	constexpr float homingShotSpeed = 10.0f;
 
 	bool isRightHoming = false;
 
-	while (ProcessMessage() == 0) {
+	while (ProcessMessage() == 0 &&!CheckHitKey(KEY_INPUT_ESCAPE)) {
 		ClearDrawScreen();
 
 		GetHitKeyStateAll(keystate);
@@ -125,14 +128,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (hshot.isActive)
 			{
 				hshot.pos += hshot.vel;
-				for (float i = 1; i < 5; i++)
-				{
-					auto tailPos = hshot.pos - hshot.vel * 2.0f * i;
-					auto thickness = 6.0f - i;
-					DrawLineAA(hshot.pos.x, hshot.pos.y,
-						tailPos.x, tailPos.y, 0xff0000, thickness * 4.0f);
-				}
-				hshot.vel = (hshot.vel + (enemypos - hshot.pos).Normalized()).Normalized() * homingShotSpeed;
+				// 意外と出来が良かった訓
+				//for (float i = 1; i < 5; i++)
+				//{
+				//	auto tailPos = hshot.pos - hshot.vel * 2.0f * i;
+				//	auto thickness = 6.0f - i;
+				//	DrawLineAA(hshot.pos.x, hshot.pos.y,
+				//		tailPos.x, tailPos.y, 0xff0000, thickness * 4.0f);
+				//}
+				//hshot.vel = (hshot.vel + (enemypos - hshot.pos).Normalized()).Normalized() * homingShotSpeed;
+
+				// 敵へのベクトル、および今の速度ベクトルを正規化
+				auto nVelocity = hshot.vel.Normalized();
+				auto nToEnemy = (enemypos - hshot.pos).Normalized();
+
+				hshot.vel *= Dot(nVelocity, nToEnemy);
 
 				DrawCircleAA(hshot.pos.x, hshot.pos.y,
 					8.0f, 16, 0xff0000, true);

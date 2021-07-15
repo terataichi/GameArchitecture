@@ -172,12 +172,14 @@ Vector3::Normalized() {
 
 
 ///内積を返す
+// 0を中心に線対称
 float
 Dot(const Vector3& va, const Vector3& vb) {
 	return va.x*vb.x + va.y*vb.y+va.z*vb.z;
 }
 
 ///外積を返す
+// 0を中心に点対称
 Vector3
 Cross(const Vector3& va, const Vector3& vb) {
 	return Vector3(va.z*vb.y-va.y*vb.z,va.z*vb.x-va.x*vb.z,va.x*vb.y - vb.x*va.y);
