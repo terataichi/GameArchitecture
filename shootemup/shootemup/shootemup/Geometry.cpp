@@ -54,7 +54,6 @@ float Vector2::SQMagnitude() const
 	return x * x + y * y;
 }
 
-
 void 
 Vector2::Normalize() {
 	float mag = Magnitude();

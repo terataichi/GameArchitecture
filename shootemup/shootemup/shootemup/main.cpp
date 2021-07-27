@@ -3,6 +3,7 @@
 #include <memory>
 #include <list>
 #include"Geometry.h"
+#include "HomingShot.h"
 
 ///当たり判定関数
 ///@param posA Aの座標
@@ -13,6 +14,8 @@ bool IsHit(const Position2& posA, float radiusA, const Position2& posB,  float r
 	//当たり判定を実装してください
 	return false;
 }
+
+#define MAX_BULLED 16
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ChangeWindowMode(true);
@@ -38,11 +41,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int enemyH[2];
 	LoadDivGraph("img/enemy.png", 2, 2, 1, 32, 32, enemyH);
 
-	struct Bullet {
-		Position2 pos;//座標
-		Vector2 vel;//速度
-		bool isActive = false;//生きてるか～？
-	};
+
 
 	//弾の半径
 	float bulletRadius = 5.0f;
@@ -54,7 +53,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Bullet bullets[256];
 
 	// プレイヤーのホーミング弾
-	Bullet homingShots[100];
+	HomingShot homingShots[MAX_BULLED] = {};
 
 	Position2 enemypos(320,25);//敵座標
 	Position2 playerpos(320, 400);//自機座標
@@ -106,6 +105,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		if (keystate[KEY_INPUT_Z] && !lastKeyState[KEY_INPUT_Z])
 		{
+			int count = 0;
 			// ホーミング玉発射
 			DrawString(100, 100, "発射", 0xf);
 			for (auto& hshot : homingShots)
@@ -115,20 +115,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					hshot.isActive = true;
 					hshot.pos = playerpos;
 
-					hshot.vel = { isRightHoming ? homingShotSpeed : -homingShotSpeed, 0.0f, };
+					hshot.vel = { count == 0 ? homingShotSpeed : -homingShotSpeed, 10.0f };
+					hshot.vel.Normalize();
+					hshot.vel *= homingShotSpeed;
 					isRightHoming = !isRightHoming;
-					break;
+					if (++count > 2)
+					{
+						break;
+					}
 				}
 			}
 		}
 		// プレイヤーのホーミング弾の処理
+		int i = 0;
 		for (auto& hshot : homingShots)
 		{
 			// アクティブかどうか
 			if (hshot.isActive)
 			{
+				if (frame % 5 == 0)
+				{
+					hshot.trail.Update();
+				}
 				hshot.pos += hshot.vel;
+				hshot.trail.Draw();
+
 				// 意外と出来が良かった訓
+				// 簡易版
 				//for (float i = 1; i < 5; i++)
 				//{
 				//	auto tailPos = hshot.pos - hshot.vel * 2.0f * i;
@@ -141,8 +154,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				// 敵へのベクトル、および今の速度ベクトルを正規化
 				auto nVelocity = hshot.vel.Normalized();
 				auto nToEnemy = (enemypos - hshot.pos).Normalized();
-
-				hshot.vel *= Dot(nVelocity, nToEnemy);
+				auto dot = Dot(nVelocity, nToEnemy);							// cosΘが出る
+				auto angle = acos(dot);											// 角度が出る(0)
+				angle = std::fminf(angle, DX_PI_F / 24.0f);
+				auto sgin = Cross(nVelocity, nToEnemy) > 0.0f ? 1.0f : -1.0f;	// 
+				angle = angle * sgin + atan2f(hshot.vel.y, hshot.vel.x);
+				hshot.vel = hshot.vel.Normalized() + Vector2(cos(angle), sin(angle)) * homingShotSpeed;
 
 				DrawCircleAA(hshot.pos.x, hshot.pos.y,
 					8.0f, 16, 0xff0000, true);
@@ -151,6 +168,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if ((enemypos - hshot.pos).SQMagnitude() < 30.0f * 30.0f)
 				{
 					hshot.isActive = false;
+					hshot.trail.Clrear();
 				}
 				//弾を殺す
 				if (hshot.pos.x + 16 < 0 || hshot.pos.x - 16 > 640 ||
@@ -158,6 +176,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					hshot.isActive = false;
 				}
 			}
+			i++;
 		}
 
 		DrawCircleAA(enemypos.x, enemypos.y, 50.0f, 16, 0x00ff00, false);
