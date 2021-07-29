@@ -17,6 +17,24 @@ bool IsHit(const Position2& posA, float radiusA, const Position2& posB,  float r
 
 #define MAX_BULLED 16
 
+// バレットのｈをつくる
+
+namespace {
+	// メモ
+	//HomingShot
+	// .cpp
+
+	// .h
+	//bulled.hをinclude
+	//Trail
+	// .cpp
+	// div=1.0f/static_cast<float>(histry_.size())
+	// .h
+	// 	   int handle_
+	// SetHandle(int handle)
+}
+
+
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ChangeWindowMode(true);
 	SetMainWindowText("1916025_寺崎大智");
@@ -41,7 +59,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int enemyH[2];
 	LoadDivGraph("img/enemy.png", 2, 2, 1, 32, 32, enemyH);
 
-
+	int arrowH = LoadGraph("img/arrow2.png");
 
 	//弾の半径
 	float bulletRadius = 5.0f;
@@ -54,6 +72,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// プレイヤーのホーミング弾
 	HomingShot homingShots[MAX_BULLED] = {};
+
+	for (auto shot : homingShots)
+	{
+		// shot.SetHandle(arrowH);
+	}
 
 	Position2 enemypos(320,25);//敵座標
 	Position2 playerpos(320, 400);//自機座標
@@ -89,7 +112,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawExtendGraph(0, skyy - 480, 640, skyy, skyH, true);
 		DrawExtendGraph(0, skyy2, 640, skyy2 + 480, sky2H, true);
 		DrawExtendGraph(0, skyy2 - 480, 640, skyy2, sky2H, true);
-
 
 		//プレイヤー
 		if (keystate[KEY_INPUT_RIGHT]) {
