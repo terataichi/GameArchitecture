@@ -73,9 +73,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// プレイヤーのホーミング弾
 	HomingShot homingShots[MAX_BULLED] = {};
 
-	for (auto shot : homingShots)
+	for (auto& shot : homingShots)
 	{
-		// shot.SetHandle(arrowH);
+		shot.trail.SetHandle(arrowH);
 	}
 
 	Position2 enemypos(320,25);//敵座標
@@ -155,7 +155,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// アクティブかどうか
 			if (hshot.isActive)
 			{
-				if (frame % 5 == 0)
+				if (frame % 2 == 0)
 				{
 					hshot.trail.Update();
 				}
@@ -196,6 +196,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (hshot.pos.x + 16 < 0 || hshot.pos.x - 16 > 640 ||
 					hshot.pos.y + 24 < 0 || hshot.pos.y - 24 > 480) {
 					hshot.isActive = false;
+					hshot.trail.Clrear();
 				}
 			}
 			i++;

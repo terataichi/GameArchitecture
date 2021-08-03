@@ -129,6 +129,7 @@
     <ClCompile Include="Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="HomingShot.h" />
     <ClInclude Include="Trail.h" />
