@@ -16,13 +16,13 @@ void SceneManager::Init()
 	mFader = new Fader();
 	mFader->Init();
 
-	mScene = new TitleScene(this);
-	mScene->Init();
-
 	mCamera = new Camera();
 
 	mMiniCamera = new MiniCamera(mCamera);
 	mMiniCamera->Init();
+
+	mScene = new TitleScene(this);
+	mScene->Init();
 
 	mIsSceneChanging = false;
 
@@ -114,7 +114,7 @@ void SceneManager::Release(void)
 void SceneManager::Init3D()
 {
 	// Zバッファーを有効にする
-	SetUseZBuffer3D(false);
+	SetUseZBuffer3D(true);
 
 	// Zバッファーの書き込みを有効
 	SetWriteZBuffer3D(true);

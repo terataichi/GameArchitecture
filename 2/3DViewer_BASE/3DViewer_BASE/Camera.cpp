@@ -1,5 +1,7 @@
 #include "Camera.h"
 #include "AsoUtility.h"
+#include "Unit.h"
+
 //#include <DxLib.h>
 
 Camera::Camera()
@@ -13,7 +15,7 @@ Camera::~Camera()
 
 void Camera::Init()
 {
-	pos_ = { 0.0f,200.0f,-500.0f };
+	pos_ = { 0.0f,HEIGHT,-DIS_TARGET_TO_CAMERA };
 	angle_ = { static_cast<float>(AsoUtility::Deg2RadD(30.0)),0.0f,0.0f };
 	SetCameraPositionAndAngle(
 		pos_, angle_.x, angle_.y, angle_.z
@@ -54,8 +56,8 @@ void Camera::Update()
 	};
 	moveAngle(CheckHitKey(KEY_INPUT_UP), angle_.x, ang);
 	moveAngle(CheckHitKey(KEY_INPUT_DOWN), angle_.x, -ang);
-	moveAngle(CheckHitKey(KEY_INPUT_NUMPAD0), angle_.z, -ang);
-	moveAngle(CheckHitKey(KEY_INPUT_NUMPAD1), angle_.z, ang);
+	//moveAngle(CheckHitKey(KEY_INPUT_NUMPAD0), angle_.z, -ang);
+	//moveAngle(CheckHitKey(KEY_INPUT_NUMPAD1), angle_.z, ang);
 	moveAngle(CheckHitKey(KEY_INPUT_RIGHT), angle_.y, ang);
 	moveAngle(CheckHitKey(KEY_INPUT_LEFT), angle_.y, -ang);
 
@@ -64,12 +66,45 @@ void Camera::Update()
 
 void Camera::SetBeforeDraw()
 {
+	if (unit_ == nullptr)
+	{
+		SetCameraPositionAndAngle(
+			pos_, angle_.x, angle_.y, angle_.z
+		);
+	}
+	else
+	{
+		// 注視店の更新
 
+		target_ = unit_->GetPos();
+
+		float cameraDirX = sinf(angle_.y);
+		float cameraDirZ = cosf(angle_.y);
+
+		VECTOR cameraDIR = VNorm({ cameraDirX ,0.0f,cameraDirZ });
+		VECTOR targetPow = VScale(cameraDIR, 300);
+
+		target_ = VAdd(target_,targetPow );
+
+
+		// まずカメラへの方向計算
+		float dirX = sinf(angle_.y + AsoUtility::Deg2RadF(180.0f));
+		float dirZ = cosf(angle_.y + AsoUtility::Deg2RadF(180.0f));
+		// 単位ベクトルに変換
+		VECTOR dir = VNorm({ dirX ,0.0f,dirZ });
+		// 大きさとかけて座標を出す
+		VECTOR movePow = VScale(dir, DIS_TARGET_TO_CAMERA);
+
+		pos_.x = target_.x + movePow.x;
+		pos_.z = target_.z + movePow.z;
+		pos_.y = HEIGHT;
+
+		
+
+		SetCameraPositionAndTargetAndUpVec(pos_, target_, VECTOR{ 0.0f,1.0f,0.0f });
+	}
 	//SetCameraPositionAndTarget_UpVecY(pos_, target_);
-	SetCameraPositionAndTargetAndUpVec(pos_, target_, VECTOR{ 0.0f,0.0f,0.0f });
-	//SetCameraPositionAndAngle(
-	//	pos_, angle_.x, angle_.y, angle_.z
-	//);
+
 }
 
 void Camera::Draw()
@@ -90,7 +125,12 @@ const VECTOR& Camera::GetAngle()
 	return angle_;
 }
 
-void Camera::SetTardet(VECTOR& pos)
+void Camera::SetUnit(Unit* unit)
+{
+	unit_ = unit;
+}
+
+void Camera::SetTarget(VECTOR& pos)
 {
 	target_ = pos;
 }

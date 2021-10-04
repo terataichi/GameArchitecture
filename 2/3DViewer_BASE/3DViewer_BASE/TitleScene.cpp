@@ -6,6 +6,7 @@
 #include "Stage.h"
 #include "AsoUtility.h"
 #include "Unit.h"
+#include "RollBall.h"
 
 TitleScene::TitleScene(SceneManager* manager) : SceneBase(manager)
 {
@@ -15,6 +16,8 @@ void TitleScene::Init(void)
 {
 	mStage_ = new Stage(mSceneManager);
 	mUnit_ = new Unit(mSceneManager);
+	mRollBall_ = new RollBall(mSceneManager, mUnit_);
+	mSceneManager->GetCamera()->SetUnit(mUnit_);
 	//mStage_->Init();
 }
 
@@ -27,12 +30,14 @@ void TitleScene::Update(void)
 	}
 	mStage_->Update();
 	mUnit_->Update();
+	mRollBall_->Update();
 }
 
 void TitleScene::Draw(void)
 {
 	mStage_->Draw();
 	mUnit_->Draw();
+	mRollBall_->Draw();
 	DrawDebug();
 }
 
@@ -42,6 +47,8 @@ void TitleScene::Release(void)
 	delete mStage_;
 	mUnit_->Relese();
 	delete mUnit_;
+	mRollBall_->Relese();
+	delete mRollBall_;
 }
 
 void TitleScene::DrawDebug(void)
@@ -65,4 +72,8 @@ void TitleScene::DrawDebug(void)
 
 	DrawFormatString(0, 70, 0xffffff, "ƒLƒƒƒ‰Šp“x	:(%.1f,%.1f,%.1f)",
 		AsoUtility::Rad2DegD(angle.x), AsoUtility::Rad2DegD(angle.y), AsoUtility::Rad2DegD(angle.z));
+
+	
+	DrawFormatString(0, 100, 0xffffff, "‹ÊŠp“x	:(%.1f,)",
+		AsoUtility::Rad2DegD(mRollBall_->GetAngle()));
 }

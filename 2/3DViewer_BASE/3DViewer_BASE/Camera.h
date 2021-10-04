@@ -1,10 +1,11 @@
 #pragma once
 #include <DxLib.h>
+class Unit;
 class Camera
 {
 public:
 	// ƒJƒƒ‰‚Ì‚‚³
-	static constexpr float HIGHT = 200.0f;
+	static constexpr float HEIGHT = 200.0f;
 	// œC‹“_‚©‚çƒJƒƒ‰‚Ü‚Å‚ÌXZ‹——£
 	static constexpr float DIS_TARGET_TO_CAMERA = 500.0f;
 
@@ -19,11 +20,13 @@ public:
 
 	const VECTOR& GetPos();
 	const VECTOR& GetAngle();
-	void SetTardet(VECTOR& pos);
+	void SetUnit(Unit* unit);
+	void SetTarget(VECTOR& pos);
 private:
 
 	VECTOR pos_;
 	VECTOR angle_;
 	VECTOR target_;
+	Unit* unit_;
 };
 

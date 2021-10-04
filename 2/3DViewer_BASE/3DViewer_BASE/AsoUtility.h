@@ -42,5 +42,7 @@ public:
 	static double Magnitude(VECTOR v);
 	static double Distance(VECTOR v1, VECTOR v2);
 
+	static VECTOR kakeru(VECTOR v1, VECTOR v2);
+
 };
 

@@ -57,17 +57,17 @@ void Unit::Update()
 	MV1SetAttachAnimTime(modelHandle_, animWalkHandle_, animStep_);
 	auto camera = mSceneMng_->GetCamera();
 	auto cameraAngle = camera->GetAngle();
-	auto move = [&](bool check, VECTOR& pos, VECTOR vel,float rad)
+	auto move = [&](bool check, VECTOR vel,float rad)
 	{
 		if (check)
 		{
-			pos.x += vel.x;
-			pos.y += vel.y;
-			pos.z += vel.z;
+			pos_.x += vel.x;
+			pos_.y += vel.y;
+			pos_.z += vel.z;
 			rotRad_ = rad;
 
 			float radY = angle_.y;
-			float moveRadY = rotRad_ + cameraAngle.y;
+			float moveRadY = rotRad_ ;
 			// Ç≠ÇÈÇ≠ÇÈñ‚ëË
 			moveRadY = AsoUtility::RadIn2PI(moveRadY);
 			radY = AsoUtility::RadIn2PI(radY);
@@ -88,19 +88,22 @@ void Unit::Update()
 
 
 
-	move(CheckHitKey(KEY_INPUT_W), pos_, { sinf(cameraAngle.y + AsoUtility::Deg2RadD(0.0f)) * vel,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(0.0f)) * vel},
+	move(CheckHitKey(KEY_INPUT_W),
+		{ sinf(cameraAngle.y + AsoUtility::Deg2RadD(0.0f)) * vel,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(0.0f)) * vel},
 		cameraAngle.y + AsoUtility::Deg2RadF(0.0f));
-	move(CheckHitKey(KEY_INPUT_S), pos_, 
+	move(CheckHitKey(KEY_INPUT_S), 
 		{ sinf(cameraAngle.y + AsoUtility::Deg2RadD(180.0f)) * vel,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(180.0f)) * vel },
 		 cameraAngle.y + AsoUtility::Deg2RadF(180.0f));
-	move(CheckHitKey(KEY_INPUT_A), pos_, { sinf(cameraAngle.y + AsoUtility::Deg2RadD(-90.0f)) * vel ,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(-90.0f)) * vel}
-	, cameraAngle.y + AsoUtility::Deg2RadF(-90.0f));
-	move(CheckHitKey(KEY_INPUT_D), pos_, { sinf(cameraAngle.y + AsoUtility::Deg2RadD(90.0f)) * vel ,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(90.0f)) * vel }
-	, cameraAngle.y + AsoUtility::Deg2RadF(90.0f));
+	move(CheckHitKey(KEY_INPUT_A),
+		{ sinf(cameraAngle.y + AsoUtility::Deg2RadD(-90.0f)) * vel ,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(-90.0f)) * vel},
+		cameraAngle.y + AsoUtility::Deg2RadF(-90.0f));
+	move(CheckHitKey(KEY_INPUT_D),
+		{ sinf(cameraAngle.y + AsoUtility::Deg2RadD(90.0f)) * vel ,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(90.0f)) * vel },
+		cameraAngle.y + AsoUtility::Deg2RadF(90.0f));
 	//move(CheckHitKey(KEY_INPUT_Q), pos_, { 0.0f,vel,0.0f });
 	//move(CheckHitKey(KEY_INPUT_E), pos_, { 0.0f,-vel,0.0f });
 
-	camera->SetTardet(pos_);
+	//camera->SetTarget(pos_);
 	// äpìxê›íË
 	auto angle = angle_;
 	angle.x += localAngle_.x;
