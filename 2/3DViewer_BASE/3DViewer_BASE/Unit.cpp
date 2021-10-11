@@ -115,6 +115,7 @@ void Unit::Update()
 
 void Unit::Draw()
 {
+	DrawSphere3D(pos_, 20, 8, 0xffff, 0xffff, true);
 	// ƒ‚ƒfƒ‹•`‰æ
 	MV1DrawModel(modelHandle_);
 }

@@ -2,13 +2,14 @@
 #include <DxLib.h>
 
 class SceneManager;
+class Unit;
 class Enemy
 {
 public:
 	static constexpr float SPEED_ROT = 5.0f;
 	static constexpr float SPEED_ROT_RAD = SPEED_ROT * (DX_PI_F / 180.0f);
 
-	Enemy(SceneManager* mng);
+	Enemy(SceneManager* mng, Unit* unit);
 	~Enemy();
 	void Init();
 	void Update();
@@ -20,6 +21,8 @@ public:
 
 private:
 	SceneManager* mSceneMng_;
+
+	Unit* unit_;
 
 	int modelHandle_;
 	VECTOR pos_;

@@ -36,7 +36,7 @@ void RollBall::Update()
     angle = atan2f(pos_.x - uPos.x, pos_.z - uPos.z);
     
     float uAngle = unit_->GetAngle().y;
-    angle_ = unit_->GetAngle().y - angle;
+    angle_ = AsoUtility::RadIn2PI(unit_->GetAngle().y - angle);
 
 }
 
