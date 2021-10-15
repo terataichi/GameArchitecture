@@ -3,6 +3,10 @@
 #include "AsoUtility.h"
 #include "Camera.h"
 
+#include "Bulled.h"
+
+#include <algorithm>
+
 Unit::Unit(SceneManager* mng) :mSceneMng_(mng)
 {
 	Init();
@@ -100,6 +104,25 @@ void Unit::Update()
 	move(CheckHitKey(KEY_INPUT_D),
 		{ sinf(cameraAngle.y + AsoUtility::Deg2RadD(90.0f)) * vel ,0.0f,cosf(cameraAngle.y + AsoUtility::Deg2RadD(90.0f)) * vel },
 		cameraAngle.y + AsoUtility::Deg2RadF(90.0f));
+
+	if (CheckHitKey(KEY_INPUT_Q))
+	{
+		bulledVec_.emplace_back(std::make_unique<Bulled>(VAdd(pos_, VECTOR{0.0f,100.0f,0.0f}),
+			VECTOR{ sinf(angle_.y) * vel,0.0f,cosf(angle_.y) * vel }));
+	}
+
+	for (auto& bulled : bulledVec_)
+	{
+		bulled->Update(delta);
+	}
+
+	bulledVec_.erase(std::remove_if(bulledVec_.begin(), bulledVec_.end(),
+		[](std::unique_ptr<Bulled>& bulled)
+		{
+			return !bulled->Alive();
+		}), bulledVec_.end());
+
+
 	//move(CheckHitKey(KEY_INPUT_Q), pos_, { 0.0f,vel,0.0f });
 	//move(CheckHitKey(KEY_INPUT_E), pos_, { 0.0f,-vel,0.0f });
 
@@ -115,6 +138,10 @@ void Unit::Update()
 
 void Unit::Draw()
 {
+	for (auto& bulled : bulledVec_)
+	{
+		bulled->Draw();
+	}
 	DrawSphere3D(pos_, 20, 8, 0xffff, 0xffff, true);
 	// ƒ‚ƒfƒ‹•`‰æ
 	MV1DrawModel(modelHandle_);

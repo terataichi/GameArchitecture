@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "Unit.h"
 
+#include <cmath>
+
 Enemy::Enemy(SceneManager* mng,	Unit* unit) :mSceneMng_(mng),unit_(unit)
 {
 	Init();

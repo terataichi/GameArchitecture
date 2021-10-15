@@ -1,7 +1,11 @@
 #pragma once
 #include <DxLib.h>
+#include <memory>
+#include <vector>
 
 class SceneManager;
+class Bulled;
+
 class Unit
 {
 public:
@@ -20,6 +24,8 @@ public:
 
 private:
 	SceneManager* mSceneMng_;
+
+	std::vector<std::unique_ptr<Bulled>> bulledVec_;
 
 	int modelHandle_;
 	VECTOR pos_;
