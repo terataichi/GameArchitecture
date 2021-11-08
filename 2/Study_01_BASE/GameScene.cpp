@@ -6,46 +6,62 @@
 #include "SceneManager.h"
 #include "Camera.h"
 #include "GameScene.h"
-#include "SpaseDome.h"
+#include "SpaceDome.h"
 #include "Stage.h"
-#include "PlayerShip.h"
+#include "Player.h"
+#include "RockManager.h"
 
 GameScene::GameScene(SceneManager* manager) : SceneBase(manager)
 {
-
 }
 
 void GameScene::Init(void)
 {
-	mPlayerShip = new PlayerShip(mSceneManager);
-	mSpaseDome = new SpaseDome(mSceneManager, mPlayerShip->GetTransform());
-	mStage = new Stage(mSceneManager);
+	mSpaceDome = new SpaceDome(mSceneManager);
+	mSpaceDome->Init();
 
-	mSceneManager->GetCamera()->SetShip(mPlayerShip->GetTransform());
-	mSceneManager->GetCamera()->ChangeMode(Camera::MODE::FOLLOW_SPRING);
+	mStage = new Stage(mSceneManager);
+	mStage->Init();
+
+	mPlayer = new Player(mSceneManager);
+	mPlayer->Init();
+
+	rockManager = new RockManager(mSceneManager, mPlayer);
+	rockManager->Init();
+
+	mSceneManager->GetCamera()->ChangeMode(CAMERA_MODE::FOLLOW_SPRING);
+	mSceneManager->GetCamera()->SetPlayer(mPlayer);
+
+	mSpaceDome->SetPlayer(mPlayer);
 }
 
 void GameScene::Update(void)
 {
+	mSpaceDome->Update();
+	mPlayer->Update();
+	rockManager->Update();
+
 	// シーン遷移
 	if (keyTrgDown[KEY_SYS_START])
 	{
 		mSceneManager->ChangeScene(SceneManager::SCENE_ID::EVENT, true);
 	}
-	// プレイヤーを最初に更新
-	// プレイヤーの移動に合わせて処理をするのが多いから
-	mPlayerShip->Update();
-	mSpaseDome->Update();
-	mStage->Update();
+
 }
 
 void GameScene::Draw(void)
 {
-	mSpaseDome->Draw();
+
+	mSpaceDome->Draw();
 	mStage->Draw();
-	mPlayerShip->Draw();
+	mPlayer->Draw();
+	rockManager->Draw();
 }
 
 void GameScene::Release(void)
 {
+	mSpaceDome->Release();
+	mStage->Release();
+	mPlayer->Release();
+	rockManager->Release();
 }

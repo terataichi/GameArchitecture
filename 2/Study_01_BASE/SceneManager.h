@@ -7,6 +7,7 @@ class Fader;
 class Camera;
 class MiniCamera;
 class ResourceManager;
+class ParticleGenerator;
 
 class SceneManager
 {
@@ -50,6 +51,7 @@ private:
 	MiniCamera* mMiniCamera;
 
 	ResourceManager* mResourceManager;
+	ParticleGenerator* particleGenerator_;
 
 	bool mIsSceneChanging;
 

@@ -4,35 +4,40 @@
 #include "SceneManager.h"
 #include "Camera.h"
 #include "TitleScene.h"
-#include "SpaseDome.h"
+#include "SpaceDome.h"
+#include "TextScroll.h"
 TitleScene::TitleScene(SceneManager* manager) : SceneBase(manager)
 {
 }
 
 void TitleScene::Init(void)
 {
+	mText = new TextScroll(mSceneManager);
 
 	mImgStartLogo = LoadGraph("Image/StartLogo.png");
-	mSpaseDome = new SpaseDome(mSceneManager, nullptr);
+
+	mSpaceDome = new SpaceDome(mSceneManager);
+	mSpaceDome->Init();
 }
 
 void TitleScene::Update(void)
 {
+	mSpaceDome->Update();
 
 	// ƒV[ƒ“‘JˆÚ
 	if (keyTrgDown[KEY_SYS_START])
 	{
 		mSceneManager->ChangeScene(SceneManager::SCENE_ID::GAME, true);
 	}
-	
-	mSpaseDome->Update();
+	mText->Update();
 }
 
 void TitleScene::Draw(void)
 {
-	mSpaseDome->Draw();
+	mSpaceDome->Draw();
 	// ƒƒS•`‰æ
 	DrawLogo();
+	mText->Draw();
 }
 
 void TitleScene::DrawLogo(void)
@@ -56,7 +61,7 @@ void TitleScene::DrawLogo(void)
 
 void TitleScene::Release(void)
 {
-
+	mSpaceDome->Release();
 	DeleteGraph(mImgStartLogo);
 
 }

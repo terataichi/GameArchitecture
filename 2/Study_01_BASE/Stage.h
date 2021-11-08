@@ -1,21 +1,21 @@
 #pragma once
+#include "Transform.h"
 
 class SceneManager;
 
 class Stage
 {
 public:
-	Stage(SceneManager* scene);
-	~Stage();
 
+	Stage(SceneManager* manager);
 	void Init(void);
 	void Update(void);
 	void Draw(void);
 	void Release(void);
 
 private:
-	void DrawGrid();
-
 	SceneManager* mSceneManager;
-};
 
+	// ƒ‚ƒfƒ‹§Œä‚ÌŠî–{î•ñ
+	Transform mTransform;
+};

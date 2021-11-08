@@ -9,7 +9,7 @@ bool Application::Init(void)
 {
 
 	// ƒVƒXƒeƒ€ˆ—
-	SetWindowText("Project");
+	SetWindowText("1916025_›è‘å’q");
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 	if (DxLib_Init() == -1)

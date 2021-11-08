@@ -4,14 +4,16 @@
 class Rock
 {
 public:
-	Rock(int modelID, VECTOR pos, VECTOR angle , VECTOR Scale);
-	~Rock();
 
-	void Init(void);
+	Rock();
+	void Init(int modelID, VECTOR pos, VECTOR angle, VECTOR scale);
 	void Update(void);
 	void Draw(void);
 	void Release(void);
+
 private:
+
+	// ÉÇÉfÉãêßå‰ÇÃäÓñ{èÓïÒ
 	Transform mTransform;
 };
 

@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "ResourceManager.h"
 #include "SceneManager.h"
+#include "ParticleGenerator.h"
 
 void SceneManager::Init()
 {
@@ -21,6 +22,9 @@ void SceneManager::Init()
 
 	mResourceManager = new ResourceManager();
 	mResourceManager->Init();
+
+	particleGenerator_ = new ParticleGenerator(this, { 0,0,0 }, 20);
+	particleGenerator_->Init();
 
 	mScene = new TitleScene(this);
 	mScene->Init();
@@ -118,6 +122,8 @@ void SceneManager::Update(void)
 	// カメラ更新ステップ
 	mCamera->Update();
 
+	particleGenerator_->Update();
+
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -131,6 +137,7 @@ void SceneManager::Update(void)
 	// 描画
 	mScene->Draw();
 	mCamera->Draw();
+	particleGenerator_->Draw();
 
 	switch (mSceneID)
 	{
@@ -162,6 +169,8 @@ void SceneManager::Release(void)
 	mResourceManager->Release();
 	delete mResourceManager;
 
+	particleGenerator_->Release();
+	delete particleGenerator_;
 }
 
 void SceneManager::ChangeScene(SCENE_ID nextId, bool isFading)

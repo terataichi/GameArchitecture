@@ -1,9 +1,10 @@
 #include "DxLib.h"
-#include "GameCommon.h"
-#include "Camera.h"
 #include "AsoUtility.h"
-#include "Transform.h"
+#include "GameCommon.h"
 #include "SceneManager.h"
+#include "Camera.h"
+#include "Player.h"
+
 
 Camera::Camera(SceneManager* manager)
 {
@@ -16,10 +17,8 @@ Camera::~Camera()
 
 void Camera::Init()
 {
-	ChangeMode(MODE::FREE);
-	SetDefault();
-
-	
+	ChangeMode(CAMERA_MODE::FREE);
+	player_ = nullptr;
 }
 
 void Camera::SetDefault(void)
@@ -39,31 +38,38 @@ void Camera::SetDefault(void)
 
 void Camera::Update()
 {
+	switch (mMode)
+	{
+	case CAMERA_MODE::FREE:
+		Rotate();
+		Move();
+		break;
+	case CAMERA_MODE::FIXED:
 
+		break;
+	case CAMERA_MODE::FOLLOW:
 
-
+		break;
+	default:
+		break;
+	}
 }
 
 void Camera::SetBeforeDraw(void)
 {
-
-	// クリップ距離を設定する(SetDrawScreenでリセットされる)
-	SetCameraNearFar(30.0f, 15000.0f);
-
-
 	switch (mMode)
 	{
-	case Camera::MODE::FREE:
+	case CAMERA_MODE::FREE:
 		SetBeforeDrawFree();
 		break;
-	case Camera::MODE::FIXSED_POINT:
-		SetBeforeDrawFixsedPoint();
+	case CAMERA_MODE::FIXED:
+		SetBeforeDrawFixed();
 		break;
-	case Camera::MODE::FOLLOW:
+	case CAMERA_MODE::FOLLOW:
 		SetBeforeDrawFollow();
 		break;
-	case Camera::MODE::FOLLOW_SPRING:
-		SetBeforeDrawFollowSpring();
+	case CAMERA_MODE::FOLLOW_SPRING:
+		SetBeforeDrawSpring();
 		break;
 	default:
 		break;
@@ -75,169 +81,6 @@ void Camera::SetBeforeDraw(void)
 		mTargetPos,
 		mCameraUp
 	);
-
-}
-
-void Camera::SetBeforeDrawFree(void)
-{
-	// カメラの方向移動と回転(回転移動)
-
-	VECTOR moveDir = AsoUtility::VECTOR_ZERO;
-	auto move = [&](bool check ,VECTOR dir)
-	{
-		if (check)
-		{
-			moveDir = dir;
-		}
-	};
-	move(CheckHitKey(KEY_INPUT_W), AsoUtility::DIR_F);
-	move(CheckHitKey(KEY_INPUT_A), AsoUtility::DIR_L);
-	move(CheckHitKey(KEY_INPUT_S), AsoUtility::DIR_B);
-	move(CheckHitKey(KEY_INPUT_D), AsoUtility::DIR_R);
-
-
-	VECTOR axisDeg = AsoUtility::VECTOR_ZERO;
-	auto  rotate = [&](bool check, VECTOR dir)
-	{
-		if (check)
-		{
-			axisDeg = VAdd(axisDeg,dir);
-		}
-	};
-	rotate(CheckHitKey(KEY_INPUT_UP), { -1.0f,0.0f,0.0f });
-	rotate(CheckHitKey(KEY_INPUT_DOWN), { 1.0f,0.0f,0.0f });
-	rotate(CheckHitKey(KEY_INPUT_LEFT), { 0.0f,-1.0f,0.0f });
-	rotate(CheckHitKey(KEY_INPUT_RIGHT), { 0.0f,1.0f,0.0f });
-
-	// 回転
-	if (!AsoUtility::EqualsVZero(axisDeg))
-	{
-		// ラジアン変換
-		VECTOR axisRad;
-		axisRad.x = AsoUtility::Deg2RadF(axisDeg.x);
-		axisRad.y = AsoUtility::Deg2RadF(axisDeg.y);
-		axisRad.z = AsoUtility::Deg2RadF(axisDeg.z);
-
-		// クオータニオン更新
-		Quaternion tmpAxis = Quaternion::Euler(axisRad);
-		mQuaRot = mQuaRot.Mult(tmpAxis);
-
-		// 注視点更新
-		VECTOR tmpPos = mQuaRot.PosAxis(RELATIVE_TARGET_POS);
-		mTargetPos = VAdd(mPos, tmpPos);
-
-		// カメラの上方向
-		mCameraUp = mQuaRot.GetUp();
-	}
-
-	// 移動
-	if (!AsoUtility::EqualsVZero(moveDir))
-	{
-		float speed = 30.0f;
-
-
-		MATRIX mat = mQuaRot.ToMatrix();
-		// 移動させたい方向(ベクトル)を求めたい
-		VECTOR dir = VNorm(VTransform(moveDir, mat));
-
-		VECTOR movePower = VScale(dir, speed);
-
-		mPos = VAdd(mPos, movePower);
-		mTargetPos = VAdd(mTargetPos, movePower);
-	}
-}
-
-void Camera::SetBeforeDrawFixsedPoint(void)
-{
-}
-
-void Camera::SetBeforeDrawFollow(void)
-{
-	if (mShipTransform == nullptr)
-	{
-		return;
-	}
-
-	// プレイヤー座標を取得
-	VECTOR shiPos = mShipTransform->pos;
-	// プレイヤーの向き取得
-	Quaternion shipRot = mShipTransform->quaRot;
-
-	// カメラ位置
-	// -------------------------------------------------------------------
-	// mPos = VAdd(shiPos, RELATIVE_CAMERA_FOLLOW);
-	// -> プレイヤーが正面を向いている時しか対応できない
-	//	  相対座標に向かってプレイヤーの開店を加える必要がある
-	VECTOR soutaiCameraPos;
-	soutaiCameraPos = shipRot.PosAxis(RELATIVE_CAMERA_FOLLOW);
-
-	mPos = VAdd(shiPos, soutaiCameraPos);
-	// -------------------------------------------------------------------
-
-
-	// 注視点
-	// -------------------------------------------------------------------
-	// mTargetPos
-	VECTOR soutaiTargetPos;
-	soutaiTargetPos = shipRot.PosAxis(RELATIVE_TARGET_POS);
-	mTargetPos = VAdd(mPos, soutaiTargetPos);
-	// -------------------------------------------------------------------
-
-	// カメラの上方向
-	// -------------------------------------------------------------------
-	// mCameraUp
-	mCameraUp = shipRot.GetUp();
-	// -------------------------------------------------------------------
-
-	// 時機とカメラ位置との相対座標
-	RELATIVE_CAMERA_FOLLOW;
-
-	// カメラ位置とRELATIVE_TARGET_POS相対座標
-	RELATIVE_TARGET_POS;
-
-}
-
-void Camera::SetBeforeDrawFollowSpring(void)
-{
-	if (mShipTransform == nullptr)
-	{
-		return;
-	}
-
-	// (定数予定)
-	float POW_SPRING = 24.0f;
-	float dampening = 2.0 * sqrt(POW_SPRING);
-
-	float delta = mSceneManager->GetDeltaTime();
-
-	// プレイヤー座標を取得
-	VECTOR shiPos = mShipTransform->pos;
-	// プレイヤーの向き取得
-	Quaternion shipRot = mShipTransform->quaRot;
-
-	// カメラの相対位置
-	VECTOR soutaiCameraPos;
-	soutaiCameraPos = shipRot.PosAxis(RELATIVE_CAMERA_FOLLOW_SPRIBNG);
-
-	// 理想位置
-	VECTOR idealPos = VAdd(shiPos, soutaiCameraPos);
-
-	// 現在位置と理想位置の差
-	VECTOR diff = VSub(mPos, idealPos);
-
-	// ばねの力
-	VECTOR force = VSub(VScale(diff, -POW_SPRING), VScale(mVelosity, dampening));
-
-	// カメラ速度を更新
-	mVelosity = VAdd(mVelosity,VScale(force, delta));
-	mPos = VAdd(mPos, VScale(mVelosity, delta));
-
-	// mTargetPos
-	VECTOR soutaiTargetPos;
-	soutaiTargetPos = shipRot.PosAxis(RELATIVE_CAMERA_FOLLOW_SPRIBNG);
-	mTargetPos = VAdd(mPos, soutaiTargetPos);
-
-	mCameraUp = shipRot.GetUp();
 }
 
 void Camera::Draw()
@@ -276,6 +119,8 @@ void Camera::DrawUI(void)
 	DrawString(
 		SCREEN_SIZE_X - x, y, "　ゲームオーバー", 0xffffff);
 
+	auto degree = mQuaRot.ToEuler();
+	DrawFormatString(0,0,0xffffff,"%.1f : %.1f : %.1f",AsoUtility::Rad2DegF(degree.x), AsoUtility::Rad2DegF(degree.y), AsoUtility::Rad2DegF(degree.z));
 }
 
 void Camera::Release(void)
@@ -297,13 +142,143 @@ VECTOR Camera::GetDir(void)
 	return VNorm(VSub(mTargetPos, mPos));
 }
 
-void Camera::ChangeMode(MODE mode)
+void Camera::ChangeMode(CAMERA_MODE mode)
 {
-	SetDefault();
 	mMode = mode;
+
+	SetDefault();
 }
 
-void Camera::SetShip(Transform* trans)
+void Camera::SetPlayer(Player* player)
 {
-	mShipTransform = trans;
+	player_ = player;
+}
+
+void Camera::Move()
+{
+	VECTOR move = AsoUtility::VECTOR_ZERO;
+
+	if (CheckHitKey(KEY_INPUT_W)) move.z += 1.0f;
+	if (CheckHitKey(KEY_INPUT_S)) move.z -= 1.0f;
+	if (CheckHitKey(KEY_INPUT_A)) move.x -= 1.0f;
+	if (CheckHitKey(KEY_INPUT_D)) move.x += 1.0f;
+
+	if (move.x == 0 && move.z == 0) return;
+
+	move = VNorm(mQuaRot.PosAxis(move));
+	move = VScale(move, MOVE_SPEED * mSceneManager->GetDeltaTime());
+	mPos = VAdd(mPos, move);
+	mTargetPos = VAdd(mPos, mQuaRot.PosAxis(RELATIVE_TARGET_POS));
+
+}
+
+void Camera::Rotate()
+{
+	VECTOR angle = AsoUtility::VECTOR_ZERO;
+
+	if (CheckHitKey(KEY_INPUT_UP)) angle.x -= 1.0f;
+	if (CheckHitKey(KEY_INPUT_DOWN)) angle.x += 1.0f;
+	if (CheckHitKey(KEY_INPUT_RIGHT)) angle.y += 1.0f;
+	if (CheckHitKey(KEY_INPUT_LEFT)) angle.y -= 1.0f;
+
+	if (angle.x == 0 && angle.y == 0) return;
+
+	angle = VNorm(angle);
+	auto rotate = ROTATE_SPEED * mSceneManager->GetDeltaTime();
+
+	angle = VGet(AsoUtility::Deg2RadF(angle.x * rotate), AsoUtility::Deg2RadF(angle.y * rotate), 0);
+	auto degree = mQuaRot.ToEuler();
+	mQuaRot = Quaternion::Euler(VGet(angle.x + degree.x, angle.y + degree.y, 0));
+
+	// 注視点更新
+	mTargetPos = VAdd(mPos, mQuaRot.PosAxis(RELATIVE_TARGET_POS));
+	//mCameraUp = mQuaRot.PosAxis(AsoUtility::DIR_U);
+
+}
+
+void Camera::SetBeforeDrawFree()
+{
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	SetCameraNearFar(30.0f, 15000.0f);
+}
+
+void Camera::SetBeforeDrawFixed()
+{
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	SetCameraNearFar(30.0f, 15000.0f);
+}
+
+void Camera::SetBeforeDrawFollow()
+{
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	SetCameraNearFar(30.0f, 15000.0f);
+
+	if (player_ == nullptr)
+	{
+		return;
+	}
+		VECTOR playerPos = player_->GetTransForm().pos;
+
+		MATRIX playerMat = player_->GetTransForm().matPos;
+		Quaternion playerRot = player_->GetTransForm().quaRot;
+
+
+
+		VECTOR relativeCameraPos = {};
+		relativeCameraPos = VTransform(RELATIVE_CAMERA_FOLLOW, playerMat);
+
+		relativeCameraPos = playerRot.PosAxis(RELATIVE_CAMERA_FOLLOW);
+
+		mPos = VAdd(playerPos, relativeCameraPos);
+
+
+		VECTOR relativeTargetPos = {};
+		relativeTargetPos = VTransform(RELATIVE_TARGET_POS, playerMat);
+		relativeTargetPos = playerRot.PosAxis(RELATIVE_TARGET_POS);
+
+		mTargetPos = VAdd(mPos, relativeTargetPos);
+
+		mCameraUp = player_->GetTransForm().GetUp();
+}
+
+void Camera::SetBeforeDrawSpring()
+{
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	SetCameraNearFar(30.0f, 15000.0f);
+
+	if (player_ == nullptr)
+	{
+		return;
+	}
+	VECTOR playerPos = player_->GetTransForm().pos;
+
+	MATRIX playerMat = player_->GetTransForm().matPos;
+	Quaternion playerRot = player_->GetTransForm().quaRot;
+
+	VECTOR relativeCameraPos = {};
+
+	relativeCameraPos = playerRot.PosAxis(RELATIVE_CAMERA_FOLLOW_SPRING);
+
+	VECTOR idealPos = VAdd(playerPos, relativeCameraPos);
+
+	VECTOR diff = VSub(mPos, idealPos);
+
+	float dampening = 2.0f * sqrtf(POW);
+	float delta = mSceneManager->GetDeltaTime();
+
+	VECTOR force;
+	force = VScale(diff, -POW);
+	force = VSub(force, VScale(mVelocity, dampening));
+
+	mVelocity = VAdd(mVelocity, VScale(force, delta));
+
+	mPos = VAdd(mPos, VScale(mVelocity, delta));
+
+	VECTOR relativeTargetPos = {};
+	relativeTargetPos = VTransform(RELATIVE_TARGET_POS, playerMat);
+	relativeTargetPos = playerRot.PosAxis(RELATIVE_TARGET_POS);
+
+	mTargetPos = VAdd(mPos, relativeTargetPos);
+
+	mCameraUp = player_->GetTransForm().GetUp();
 }

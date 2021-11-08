@@ -2,9 +2,10 @@
 #include <vector>
 #include "SceneBase.h"
 class SceneManager;
-class SpaseDome;
+class SpaceDome;
 class Stage;
-class PlayerShip;
+class Player;
+class RockManager;
 
 class GameScene : public SceneBase
 {
@@ -18,9 +19,10 @@ public:
 	void Release(void) override;
 
 private:
-	SpaseDome* mSpaseDome;
 
+	SpaceDome* mSpaceDome;
 	Stage* mStage;
+	Player* mPlayer;
+	RockManager* rockManager;
 
-	PlayerShip* mPlayerShip;
 };

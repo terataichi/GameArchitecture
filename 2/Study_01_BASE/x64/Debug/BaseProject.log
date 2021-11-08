@@ -1,4 +1,6 @@
-﻿  Camera.cpp
-C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
-C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Camera.cpp(209,18): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+﻿  TextScroll.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(17,54): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(19,52): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(27,28): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(78,25): warning C4267: '初期化中': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
   BaseProject.vcxproj -> C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\x64\Debug\BaseProject.exe

@@ -1,22 +1,18 @@
 #include "Rock.h"
 
-Rock::Rock(int modelID, VECTOR pos, VECTOR angle, VECTOR Scale)
+Rock::Rock()
+{
+}
+
+void Rock::Init(int modelID, VECTOR pos, VECTOR angle, VECTOR scale)
 {
 	mTransform.modelId = modelID;
 	mTransform.pos = pos;
+	mTransform.rot = angle;
+	mTransform.scl = scale;
 	mTransform.quaRot = Quaternion::Euler(angle);
-	mTransform.scl = Scale;
 	mTransform.quaRotLocal = Quaternion();
 	mTransform.Update();
-	Init();
-}
-
-Rock::~Rock()
-{
-}
-
-void Rock::Init(void)
-{
 }
 
 void Rock::Update(void)
@@ -30,5 +26,4 @@ void Rock::Draw(void)
 
 void Rock::Release(void)
 {
-	MV1DeleteModel(mTransform.modelId);
 }

@@ -1,7 +1,8 @@
 #pragma once
 #include "SceneBase.h"
 
-class SpaseDome;
+class SpaceDome;
+class TextScroll;
 
 class TitleScene : public SceneBase
 {
@@ -18,6 +19,7 @@ public:
 private:
 
 	int mImgStartLogo;
-	SpaseDome* mSpaseDome;
+	SpaceDome* mSpaceDome;
+	TextScroll* mText;
 };
 
