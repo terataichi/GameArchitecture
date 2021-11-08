@@ -1,0 +1,3 @@
+﻿  Coin.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_AClass_3DRotaion\AsoUtility.h(44,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+  BaseProject.vcxproj -> C:\Users\1916025\Desktop\GameArchitecture\2\Study_AClass_3DRotaion\x64\Debug\BaseProject.exe

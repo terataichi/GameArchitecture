@@ -1,0 +1,4 @@
+﻿  Camera.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Camera.cpp(209,18): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+  BaseProject.vcxproj -> C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\x64\Debug\BaseProject.exe
