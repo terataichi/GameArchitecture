@@ -16,6 +16,8 @@ void SpaceDome::Init(void)
 	mTransform.quaRotLocal = Quaternion();
 	mTransform.pos = AsoUtility::VECTOR_ZERO;
 
+	MV1SetWriteZBuffer(mTransform.modelId, false);
+
 	state_ = state::FOLLOW;
 	player_ = nullptr;
 

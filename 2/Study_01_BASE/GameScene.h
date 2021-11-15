@@ -11,6 +11,7 @@ class GameScene : public SceneBase
 {
 
 public:
+	static constexpr float RESTART_TIME = 2.0;
 
 	GameScene(SceneManager* manager);
 	void Init(void) override;
@@ -25,4 +26,5 @@ private:
 	Player* mPlayer;
 	RockManager* rockManager;
 
+	float resetTime_;
 };

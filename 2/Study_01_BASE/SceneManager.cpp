@@ -5,9 +5,9 @@
 #include "GameScene.h"
 #include "Camera.h"
 #include "ResourceManager.h"
+#include "EventScene.h"
 #include "SceneManager.h"
 #include "ParticleGenerator.h"
-
 void SceneManager::Init()
 {
 
@@ -33,6 +33,10 @@ void SceneManager::Init()
 
 	// デルタタイム
 	mTickCount = std::chrono::system_clock::now();
+
+	SetFogEnable(true);
+	SetFogColor(5, 5, 5);
+	SetFogStartEnd(3000.0, 15000.0f);
 
 	// 3D用の設定
 	Init3D();
@@ -234,6 +238,7 @@ void SceneManager::DoChangeScene(void)
 		mScene = new GameScene(this);
 		break;
 	case SCENE_ID::EVENT:
+		mScene = new EventScene(this);
 		break;
 	case SCENE_ID::BATTLE:
 		break;

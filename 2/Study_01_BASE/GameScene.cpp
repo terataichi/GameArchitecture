@@ -10,7 +10,10 @@
 #include "Stage.h"
 #include "Player.h"
 #include "RockManager.h"
-
+#include "ResourceManager.h"
+#include "Resource.h"
+#include "SpriteAnimator.h"
+#include "SpeechBalloon.h"
 GameScene::GameScene(SceneManager* manager) : SceneBase(manager)
 {
 }
@@ -33,6 +36,8 @@ void GameScene::Init(void)
 	mSceneManager->GetCamera()->SetPlayer(mPlayer);
 
 	mSpaceDome->SetPlayer(mPlayer);
+
+	resetTime_ = 0.0f;
 }
 
 void GameScene::Update(void)
@@ -41,11 +46,36 @@ void GameScene::Update(void)
 	mPlayer->Update();
 	rockManager->Update();
 
-	// ƒV[ƒ“‘JˆÚ
-	if (keyTrgDown[KEY_SYS_START])
+	VECTOR pos = MV1GetPosition(mStage->GetModelBoss());
+	
+	if (VSquareSize(VSub(pos, mPlayer->GetTransForm().pos)) < mStage->RADIUS * mStage->RADIUS)
 	{
 		mSceneManager->ChangeScene(SceneManager::SCENE_ID::EVENT, true);
 	}
+	if (mPlayer->GetState() == Player::STATE::Destroy)
+	{
+		resetTime_ += mSceneManager->GetDeltaTime();
+
+		if (resetTime_ > RESTART_TIME)
+		{
+			mSceneManager->ChangeScene(SceneManager::SCENE_ID::GAME, true);
+		}
+	}
+	else
+	{
+		auto info = MV1CollCheck_Sphere(mStage->GetModelDungeon(), -1,
+			mPlayer->GetTransForm().pos, Player::COLLISION_RADIUS);
+
+		if (info.HitNum > 0)
+		{
+			if (mPlayer->GetState() != Player::STATE::Destroy)
+			{
+				//mSceneManager->GetCamera()->ChangeMode(CAMERA_MODE::FOLLOW_SPRING);
+				mPlayer->SetState(Player::STATE::Destroy);
+			}
+		}
+	}
+
 
 }
 
@@ -56,6 +86,7 @@ void GameScene::Draw(void)
 	mStage->Draw();
 	mPlayer->Draw();
 	rockManager->Draw();
+	mPlayer->GetSpeech()->Draw();
 }
 
 void GameScene::Release(void)

@@ -1,5 +1,6 @@
 #include "TextScroll.h"
 #include "SceneManager.h"
+
 TextScroll::TextScroll(SceneManager* mng)
 {
     mSceneManager = mng;
@@ -14,9 +15,8 @@ void TextScroll::Init()
     mType = Type::Title;
 
     std::vector<MsgInfo> infos;
-    infos.push_back(MakeMsgInfo("Hello", infos.size()));
-
-    infos.push_back(MakeMsgInfo("Bye", infos.size()));
+    infos.push_back(MakeMsgInfo("Wagahai ha neko de aru", infos.size()));
+    infos.push_back(MakeMsgInfo("Name ha mada nai", infos.size()));
 
     mTextMap.emplace(mType, infos);
 
@@ -24,8 +24,8 @@ void TextScroll::Init()
     int i = 0;
     for (auto& info : tmpinfos)
     {
-        info.pos_.y = -100 + SIZE * i;
-        info.pos_.x = -100;
+        info.pos_.y = -200 + SIZE * i;
+        info.pos_.x = -500;
         i++;
     }
 }
@@ -69,7 +69,6 @@ void TextScroll::Release(void)
 
 TextScroll::MsgInfo TextScroll::MakeMsgInfo(std::string msg, int mapCount)
 {
-
     MsgInfo ret;
 
     std::vector<int> massages;
@@ -101,12 +100,9 @@ TextScroll::MsgInfo TextScroll::MakeMsgInfo(std::string msg, int mapCount)
         {
             ascii = 54;
         }
-
         massages.push_back(ascii);
     }
-
     ret.pos_ = {0,0,0};
     ret.massage = massages;
-
     return ret;
 }

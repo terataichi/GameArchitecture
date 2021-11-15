@@ -154,7 +154,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BossShip.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="EventScene.cpp" />
+    <ClCompile Include="EventShot.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -173,7 +176,10 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="AsoUtility.cpp" />
+    <ClCompile Include="ShotBase.cpp" />
     <ClCompile Include="SpaceDome.cpp" />
+    <ClCompile Include="SpeechBalloon.cpp" />
+    <ClCompile Include="SpriteAnimator.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TextScroll.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -183,7 +189,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="BossShip.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="EventScene.h" />
+    <ClInclude Include="EventShot.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleGenerator.h" />
     <ClInclude Include="Player.h" />
@@ -202,7 +211,10 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="AsoUtility.h" />
+    <ClInclude Include="ShotBase.h" />
     <ClInclude Include="SpaceDome.h" />
+    <ClInclude Include="SpeechBalloon.h" />
+    <ClInclude Include="SpriteAnimator.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TextScroll.h" />
     <ClInclude Include="TitleScene.h" />
