@@ -1,4 +1,6 @@
-﻿  ShotBase.cpp
-C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
-C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\ShotBase.cpp(18,50): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
-  BaseProject.vcxproj -> C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\x64\Debug\BaseProject.exe
+﻿  BossShip.cpp
+D:\学生ゲーム\GitProject置き場\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+  EventScene.cpp
+  コードを生成中...
+Resource.obj : warning LNK4204: 'D:\学生ゲーム\GitProject置き場\GameArchitecture\2\Study_01_BASE\x64\Debug\vc142.pdb' に参照するモジュールのデバッグ情報がありません。デバッグ情報を無視してオブジェクトをリンクします。
+  BaseProject.vcxproj -> D:\学生ゲーム\GitProject置き場\GameArchitecture\2\Study_01_BASE\x64\Debug\BaseProject.exe

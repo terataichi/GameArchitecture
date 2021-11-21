@@ -14,7 +14,7 @@ void EventScene::Init(void)
 	mSceneManager->GetCamera()->ChangeMode(CAMERA_MODE::FIXED);
 
 	boss = new BossShip(scene, nullptr);
-	boss->Init();
+	//boss->Init();
 
 	doom = new SpaceDome(scene);
 	doom->Init();

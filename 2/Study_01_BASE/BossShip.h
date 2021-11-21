@@ -1,40 +1,41 @@
 #pragma once
 #include "Transform.h"
-#include "SceneManager.h"
+
+class SceneManager;
 class Player;
 class EventShot;
 
 class BossShip
 {
 public:
-	static constexpr float SPEED = 4.0f;
-	// 着弾してからのイベント終了時間
-	static constexpr float TIME_IVENT = 4.0f;
+	static constexpr float SPEED_MOVE = 6.0f;
+	static constexpr float EVENT_TIME = 3.0f;
 
-	enum class STATE
+	enum class Boss_State
 	{
-		None,
+		Non,
 		Event,
 		Battle,
-		Destroy,
-		End
+		Exp,
+		End,
 	};
-
-	class Player;
-	BossShip(SceneManager* manager, Player* playerShip);
+	BossShip(SceneManager* manager, Player* player);
 	void Init(void);
 	void Update(void);
 	void Draw(void);
 	void Release(void);
-
 private:
-	SceneManager* mSceneMng;
-	Player* mPlayer;
+	SceneManager* sceneManager_;
+	Player* player_;
+	EventShot* eventShot_;
 
-	Transform mTransform;
-	EventShot* shot;
-	float mTime;
+	Transform transform_;
 
-	STATE state_;
+	float stepEvent_;
+
+
+	Boss_State state_;
+
+	void ChengeState(Boss_State state);
 };
 

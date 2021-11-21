@@ -2,15 +2,17 @@
 #include "ShotBase.h"
 
 class SceneManager;
-class Transform;
-class EventShot
-	:public ShotBase
+
+class EventShot :
+	public ShotBase
 {
 public:
-	EventShot(SceneManager* manager,Transform* trans);
+	EventShot(SceneManager* manager, Transform* transform);
 
-	void Update();
+	void Update(void)override;
+
+	float GetSpeed(void)override;
+	float GetTimeAlive(void)override;
 private:
-
 };
 
