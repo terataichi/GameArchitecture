@@ -54,7 +54,7 @@ void RockManager::Release(void)
 
 void RockManager::RandomRockInstance(void)
 {
-	VECTOR mapPos = mPlayer->GetTransForm().pos;
+	VECTOR mapPos = mPlayer->GetTransform()->pos;
 	IntVector3 cMapPos = { static_cast<int>(mapPos.x / MAP_DIV_SIZE) ,static_cast<int>(mapPos.y / MAP_DIV_SIZE) ,static_cast<int>(mapPos.z / MAP_DIV_SIZE )};
 	IntVector3 tmpPos = {};
 

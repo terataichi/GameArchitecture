@@ -153,7 +153,10 @@ Particle* ParticleGenerator::Generate(Particle* particle)
 	pos = Quaternion::PosAxis(rot, pos);
 
 	VECTOR dir = { 0.0f,0.0f,0.0f };
-	Quaternion xRot = Quaternion::AngleAxis(RandomEngine::RandomFloat(-PARTICLE_XANGLE_RAD, PARTICLE_XANGLE_RAD) - DX_PI_F / 2.0f, AsoUtility::AXIS_X);
+	Quaternion xRot = 
+		Quaternion::AngleAxis
+		(RandomEngine::RandomFloat(-PARTICLE_XANGLE_RAD, PARTICLE_XANGLE_RAD) - DX_PI_F / 2.0f
+			, AsoUtility::AXIS_X);
 
 	Quaternion finalRot = Quaternion::Mult(rot, xRot);
 

@@ -33,7 +33,7 @@ void SpaceDome::Update(void)
 	case state::FOLLOW:
 		if (player_ != nullptr)
 		{
-			mTransform.pos = player_->GetTransForm().pos;
+			mTransform.pos = player_->GetTransform()->pos;
 		}
 		break;
 	default:

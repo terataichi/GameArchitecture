@@ -34,6 +34,7 @@ void Stage::Init(void)
 
 void Stage::Update(void)
 {
+
 }
 
 void Stage::Draw(void)

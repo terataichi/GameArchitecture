@@ -129,6 +129,11 @@ bool ShotBase::IsAlive(void)
 	return mIsAlive;
 }
 
+void ShotBase::Dead(void)
+{
+	mIsAlive = false;
+}
+
 void ShotBase::CreateExplosion(void)
 {
 	mIsAlive = false;

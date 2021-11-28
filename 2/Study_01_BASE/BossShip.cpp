@@ -2,12 +2,19 @@
 #include "SceneManager.h"
 #include "EventShot.h"
 #include "Camera.h"
+#include "Turret.h"
+#include "Player.h"
 #include "AsoUtility.h"
+
+namespace
+{
+	constexpr float SPEED_MOVE = 4.0f;
+	constexpr float EVENT_TIME = 2.0f;
+}
 
 BossShip::BossShip(SceneManager* manager, Player* player) :
 	sceneManager_(manager), player_(player)
 {
-	Init();
 }
 
 void BossShip::Init(void)
@@ -20,14 +27,40 @@ void BossShip::Init(void)
 	transform_.quaRotLocal = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f);
 	transform_.Update();
 
+	// ‘O•û
+	MakeTurret(
+		{ 4.5f, 5.5f, 7.8f },
+		{ 0.0f, 0.0f, AsoUtility::Deg2RadF(-18.0f) });
+	MakeTurret(
+		{ -4.5f, 5.5f, 7.8f },
+		{ 0.0f, 0.0f, AsoUtility::Deg2RadF(18.0f) });
+
+	// ‰¡
+	MakeTurret(
+		{ 4.5f, 5.5f, 0.0f },
+		{ AsoUtility::Deg2RadF(20.0f), AsoUtility::Deg2RadF(90.0f), 0.0f });
+	MakeTurret(
+		{ -4.5f, 5.5f, 0.0f },
+		{ AsoUtility::Deg2RadF(20.0f), AsoUtility::Deg2RadF(-90.0f), 0.0f });
+
+	// Œã•û
+	MakeTurret(
+		{ 3.5f, 5.0f, -17.8f },
+		{ 0.0f, AsoUtility::Deg2RadF(180.0f), AsoUtility::Deg2RadF(18.0f) });
+	MakeTurret(
+		{ -3.5f, 5.0f, -17.8f },
+		{ 0.0f, AsoUtility::Deg2RadF(180.0f), AsoUtility::Deg2RadF(-18.0f) });
+
+	MV1SetupCollInfo(transform_.modelId);
+
 	SceneManager::SCENE_ID id = sceneManager_->GetmSceneID();
 	switch (id)
 	{
 	case SceneManager::SCENE_ID::EVENT:
-		ChengeState(Boss_State::Event);
+		ChengeState(BOSS_STATE::EVENT);
 		break;
 	case SceneManager::SCENE_ID::BATTLE:
-		ChengeState(Boss_State::Battle);
+		ChengeState(BOSS_STATE::BATTLE);
 		break;
 	default:
 		break;
@@ -39,7 +72,7 @@ void BossShip::Update(void)
 {
 	switch (state_)
 	{
-	case Boss_State::Event:
+	case BOSS_STATE::EVENT:
 		auto nor = VNorm(transform_.GetForward());
 		auto moveVec = VScale(nor, SPEED_MOVE);
 		transform_.pos = VAdd(transform_.pos, moveVec);
@@ -50,35 +83,59 @@ void BossShip::Update(void)
 			stepEvent_ -= sceneManager_->GetDeltaTime();
 			if (stepEvent_ < 0.0f)
 			{
-				sceneManager_->ChangeScene(SceneManager::SCENE_ID::BATTLE, true);
+				sceneManager_->ChangeScene(SceneManager::SCENE_ID::BATTLE,true);
 				return;
 			}
 		}
+		UpdateTurret();
 		break;
-	case Boss_State::Battle:
-		break;
-	case Boss_State::Exp:
-		break;
-	default:
+	case BOSS_STATE::BATTLE:
+		VECTOR dir = transform_.GetForward();
+		transform_.pos = VAdd(transform_.pos, VScale(dir, SPEED_MOVE));
+		float speed = (DX_PI_F / 180.0f) * sceneManager_->GetDeltaTime();
+		Quaternion que = Quaternion::AngleAxis(speed, AsoUtility::AXIS_Y);
+		transform_.quaRot = Quaternion::Mult(transform_.quaRot, que);
+		UpdateTurret();
 		break;
 	}
 	transform_.Update();
+
+	MV1RefreshCollInfo(transform_.modelId);
+}
+
+void BossShip::UpdateTurret(void)
+{
+	for (auto turret : turretList_)
+	{
+		turret->Update();
+	}
 }
 
 void BossShip::Draw(void)
 {
 	switch (state_)
 	{
-	case Boss_State::Event:
+	case BOSS_STATE::EVENT:
 		MV1DrawModel(transform_.modelId);
 		eventShot_->Draw();
+		DrawTurret();
 		break;
-	case Boss_State::Battle:
+	case BOSS_STATE::BATTLE:
+		MV1DrawModel(transform_.modelId);
+		DrawTurret();
 		break;
-	case Boss_State::Exp:
+	case BOSS_STATE::EXP:
 		break;
 	default:
 		break;
+	}
+}
+
+void BossShip::DrawTurret(void)
+{
+	for (auto turret : turretList_)
+	{
+		turret->Draw();
 	}
 }
 
@@ -90,9 +147,33 @@ void BossShip::Release(void)
 		eventShot_->Release();
 		delete eventShot_;
 	}
+	for (auto turret : turretList_)
+	{
+		turret->Release();
+		delete turret;
+	}
+	turretList_.clear();
 }
 
-void BossShip::ChengeState(Boss_State state)
+std::vector<Turret*> BossShip::GetTurret(void)
+{
+	return turretList_;
+}
+
+const int& BossShip::GetModelID(void)
+{
+	return transform_.modelId;
+}
+
+void BossShip::MakeTurret(VECTOR localPos, VECTOR localAngle)
+{
+	Turret* turret = new Turret(sceneManager_, player_->GetTransform(), &transform_, localPos, localAngle);
+	turret->Init();
+
+	turretList_.emplace_back(turret);
+}
+
+void BossShip::ChengeState(BOSS_STATE state)
 {
 	if (state_ == state)
 	{
@@ -101,19 +182,19 @@ void BossShip::ChengeState(Boss_State state)
 	state_ = state;
 	switch (state_)
 	{
-	case BossShip::Boss_State::Non:
+	case BossShip::BOSS_STATE::NON:
 		break;
-	case BossShip::Boss_State::Event:
+	case BossShip::BOSS_STATE::EVENT:
 		stepEvent_ = EVENT_TIME;
 		eventShot_ = new EventShot(sceneManager_, &transform_);
 		auto norVec = VNorm(VSub(sceneManager_->GetCamera()->GetPos(), transform_.pos));
 		eventShot_->Create(transform_.pos, norVec);
 		break;
-	case BossShip::Boss_State::Battle:
+	case BossShip::BOSS_STATE::BATTLE:
 		break;
-	case BossShip::Boss_State::Exp:
+	case BossShip::BOSS_STATE::EXP:
 		break;
-	case BossShip::Boss_State::End:
+	case BossShip::BOSS_STATE::END:
 		break;
 	default:
 		break;

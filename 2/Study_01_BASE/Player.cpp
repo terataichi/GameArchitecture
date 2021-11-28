@@ -1,21 +1,26 @@
 #include "Player.h"
 #include "SceneManager.h"
-#include "AsoUtility.h"
 #include "ParticleGenerator.h"
-#include "ResourceManager.h"
-#include "Resource.h"
 #include "SpriteAnimator.h"
+#include "AsoUtility.h"
+#include "Camera.h"
 #include "SpeechBalloon.h"
+#include "PlayerShot.h"
+
 namespace
 {
 	constexpr float MOVE_POW = 10.0f;
 	constexpr float MOVE_ROT_DEG_X = 1.0f;
 	constexpr float MOVE_ROT_DEG_Y = 1.0f;
+	constexpr float SHOT_INTERVAL = 0.3f;
 }
+
 
 Player::Player(SceneManager* manager)
 {
 	mSceneManager = manager;
+	state_ = PLAYER_STATE::NON;
+	parGene_ = nullptr;
 }
 
 void Player::Init(void)
@@ -23,83 +28,132 @@ void Player::Init(void)
 	mTransform.SetModel(MV1LoadModel("Model/PlayerShip/PlayerShip.mv1"));
 	float scale = 10.0;
 	mTransform.scl = { scale,scale,scale };
-	mTransform.quaRot = Quaternion::Euler(0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
+	mTransform.quaRot = Quaternion::Euler(0.0f, 0.0f, 0.0f);
 	mTransform.quaRotLocal = Quaternion();
-	
 	mTransform.pos = AsoUtility::VECTOR_ZERO;
+	spriteAnimator_ = new SpriteAnimator(mSceneManager, ResourceManager::SRC::SHIP_EXPLOSION, 20, 16.0f);
+
+	speechBalloon_ = new SpeechBalloon(mSceneManager, SpeechBalloon::TYPE::SPEECH, &mTransform);
+	speechBalloon_->SetText("’Ç‚Á‚ÄI");
+	speechBalloon_->SetTime(15.0f);
+	speechBalloon_->SetRelativePos({ 25.0f,25.0f,25.0f });
 
 	mTransform.Update();
 
-	mParticleGenerator = new ParticleGenerator(mSceneManager, mTransform.pos, 30);
+	shotInterval_ = 0.0f;
 
-	mExprosion = new SpriteAnimator(mSceneManager,
-		ResourceManager::SRC::SHIP_EXPLOSION,
-		20.0f,
-		8.0f);
-	mState = STATE::Run;
+	ChengeState(PLAYER_STATE::RUN);
 
-	mSpeechBalloon = new SpeechBalloon(mSceneManager, SpeechBalloon::TYPE::SPEECH, &mTransform);
-	mSpeechBalloon->SetText("–°‚¢");
-	mSpeechBalloon->SetTime(15.0f);
-	mSpeechBalloon->SetRelativePos({ 30.0f,30.0f,0.0f });
-
+	parGene_ = new ParticleGenerator(mSceneManager, mTransform.pos, 10.0f);
+	parGene_->Init();
+	isAlive_ = true;
 }
 
 void Player::Update(void)
 {
-
-	switch (mState)
+	shotInterval_ -= mSceneManager->GetDeltaTime();
+	if (shotInterval_ <= 0.0f)
 	{
-	case Player::STATE::Non:
+		shotInterval_ = 0.0f;
+	}
+	switch (state_)
+	{
+	case Player::PLAYER_STATE::NON:
 		break;
-	case Player::STATE::Run:
-		RunUpdate();
+	case Player::PLAYER_STATE::RUN:
+		ProcessTurn();
+		VECTOR forward = VNorm(mTransform.GetForward());
+
+		VECTOR moveVec = VScale(forward, MOVE_POW);
+
+		mTransform.pos = VAdd(mTransform.pos, moveVec);
+
+		mTransform.Update();
+		parGene_->SetPos(VAdd(mTransform.pos, VScale(mTransform.GetForward(), 10.0f)));
+		Shot();
 		break;
-	case Player::STATE::Destroy:
-		DestroyUpdate();
+	case Player::PLAYER_STATE::EXP:
+		if (spriteAnimator_->IsEnd())
+		{
+			ChengeState(PLAYER_STATE::END);
+		}
+		break;
+	case Player::PLAYER_STATE::END:
 		break;
 	default:
 		break;
 	}
-
-
-	mParticleGenerator->Update();
+	Quaternion rot = mTransform.rot;
+	Quaternion axis;
+	axis = Quaternion::AngleAxis(AsoUtility::Deg2RadF(180.0f), AsoUtility::AXIS_Y);
+	rot = rot.Mult(axis);
+	axis = Quaternion::AngleAxis(AsoUtility::Deg2RadF(90.0f), AsoUtility::AXIS_X);
+	rot = rot.Mult(axis);
+	parGene_->SetRot(rot);
+	parGene_->Update();
+	spriteAnimator_->Update();
+	for (auto shot : shots_)
+	{
+		if (!shot->IsAlive())
+		{
+			continue;
+		}
+		shot->Update();
+	}
 }
 
 void Player::Draw(void)
-{
-
-
-	switch (mState)
+{	
+	switch (state_)
 	{
-	case Player::STATE::Non:
+	case Player::PLAYER_STATE::NON:
 		break;
-	case Player::STATE::Run:
+	case Player::PLAYER_STATE::RUN:
 		MV1DrawModel(mTransform.modelId);
-		mParticleGenerator->Draw();
-		DrawSphere3D(mTransform.pos, COLLISION_RADIUS, 10, 0xffffff, 0xffffff, false);
+		parGene_->Draw();
 		break;
-	case Player::STATE::Destroy:
-		mExprosion->Draw();
+	case Player::PLAYER_STATE::EXP:
+		break;
+	case Player::PLAYER_STATE::END:
 		break;
 	default:
 		break;
 	}
-
-#ifdef DEBUG
-
-#endif // DEBUG
+	DrawFormatString(0, 32, 0xffffff, "%f,%f,%f", mTransform.pos.x, mTransform.pos.y, mTransform.pos.z);
+	spriteAnimator_->Draw();
+	for (auto shot : shots_)
+	{
+		if (!shot->IsAlive())
+		{
+			continue;
+		}
+		shot->Draw();
+	}
+#ifdef _DEBUG
+	//DrawSphere3D(mTransform.pos, COLLISION_RADIUS, 16, 0xffffff, 0xffffff, false);
+#endif // _DEBUG
 
 }
 
 void Player::Release(void)
 {
-	mParticleGenerator->Release();
+	parGene_->Release();
+	delete parGene_;
+	spriteAnimator_->Release();
+	delete spriteAnimator_;
+	speechBalloon_->Release();
+	delete speechBalloon_;
+	for (auto shot:shots_)
+	{
+		shot->Release();
+		delete shot;
+	}
+	shots_.clear();
 }
 
-Transform Player::GetTransForm(void)
+Transform* Player::GetTransform(void)
 {
-	return mTransform;
+	return &mTransform;
 }
 
 void Player::ProcessTurn(void)
@@ -129,52 +183,65 @@ void Player::Turn(float angle, VECTOR axis)
 	mTransform.quaRot = mTransform.quaRot.Mult(tmpQ);
 }
 
-SpeechBalloon* Player::GetSpeech()
+void Player::Dead(void)
 {
-	return mSpeechBalloon;
+	ChengeState(PLAYER_STATE::EXP);
 }
 
-void Player::SetState(STATE state)
+bool Player::isAlive(void)
 {
-	mState = state;
-	switch (mState)
+	return isAlive_;
+}
+
+bool Player::isEnd(void)
+{
+	return state_ == PLAYER_STATE::END;
+}
+
+void Player::Shot(void)
+{
+	if (shotInterval_ != 0.0f)
 	{
-	case Player::STATE::Non:
+		return;
+	}
+	if (!CheckHitKey(KEY_INPUT_N))
+	{
+		return;
+	}
+	shotInterval_ = SHOT_INTERVAL;
+	PlayerShot* shot = new PlayerShot(mSceneManager, &mTransform);
+	shot->Create(mTransform.pos, VNorm(mTransform.GetForward()));
+	shots_.emplace_back(std::move(shot));
+}
+
+const std::vector<PlayerShot*>& Player::GetShots(void) const
+{
+	return shots_;
+}
+
+void Player::ChengeState(PLAYER_STATE state)
+{
+	if (state_ == state)
+	{
+		return;
+	}
+	state_ = state;
+	switch (state_)
+	{
+	case Player::PLAYER_STATE::NON:
 		break;
-	case Player::STATE::Run:
+	case Player::PLAYER_STATE::RUN:
 		break;
-	case Player::STATE::Destroy:
-		mExprosion->Create(mTransform.pos);
+	case Player::PLAYER_STATE::EXP:
+		mSceneManager->GetCamera()->ChangeMode(CAMERA_MODE::FOLLOW);
+		isAlive_ = false;
+		spriteAnimator_->Create(mTransform.pos);
+		break;
+	case Player::PLAYER_STATE::END:
 		break;
 	default:
 		break;
 	}
-}
+	
 
-Player::STATE Player::GetState()
-{
-	return mState;
-}
-
-void Player::RunUpdate()
-{
-	ProcessTurn();
-	VECTOR forward = VNorm(mTransform.GetForward());
-
-	VECTOR moveVec = VScale(forward, MOVE_POW);
-
-	mTransform.pos = VAdd(mTransform.pos, moveVec);
-
-	mTransform.Update();
-
-	mParticleGenerator->SetPos(mTransform.pos);
-}
-
-void Player::DestroyUpdate()
-{
-	if (mExprosion->IsEnd())
-	{
-		return;
-	}
-	mExprosion->Update();
 }

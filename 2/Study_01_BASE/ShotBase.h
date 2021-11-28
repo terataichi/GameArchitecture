@@ -26,6 +26,7 @@ public:
 	virtual float GetTimeAlive(void);
 
 	bool IsAlive(void);
+	void Dead(void);
 	VECTOR GetPos(void);
 	float GetCollisionRadius(void);
 

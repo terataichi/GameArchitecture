@@ -5,6 +5,23 @@
 #include "Camera.h"
 #include "Player.h"
 
+namespace
+{
+	constexpr float move_speed = 500.0f;
+	constexpr float rotate_speed = 90.0f;
+}
+
+namespace
+{
+	constexpr float spring_pow = 24.0f;
+}
+
+namespace
+{
+	constexpr float shake_time = 2.0f;
+	constexpr float shake_width = 3.0f;
+	constexpr float shake_speed = 30.0f;
+}
 
 Camera::Camera(SceneManager* manager)
 {
@@ -71,16 +88,14 @@ void Camera::SetBeforeDraw(void)
 	case CAMERA_MODE::FOLLOW_SPRING:
 		SetBeforeDrawSpring();
 		break;
+	case CAMERA_MODE::SHAKE:
+		SetBeforeDrawShake();
+		break;
 	default:
 		break;
 	}
 
-	// カメラの設定
-	SetCameraPositionAndTargetAndUpVec(
-		mPos,
-		mTargetPos,
-		mCameraUp
-	);
+
 }
 
 void Camera::Draw()
@@ -147,6 +162,24 @@ void Camera::ChangeMode(CAMERA_MODE mode)
 	mMode = mode;
 
 	SetDefault();
+	switch (mMode)
+	{
+	case CAMERA_MODE::FREE:
+		break;
+	case CAMERA_MODE::FIXED:
+		break;
+	case CAMERA_MODE::FOLLOW:
+		break;
+	case CAMERA_MODE::FOLLOW_SPRING:
+		break;
+	case CAMERA_MODE::SHAKE:
+		stepShake_ = shake_time;
+		shakeDir_ = VNorm({ 0.7f,0.7f,0.0f });
+		defPos_ = mPos;
+		break;
+	default:
+		break;
+	}
 }
 
 void Camera::SetPlayer(Player* player)
@@ -166,7 +199,7 @@ void Camera::Move()
 	if (move.x == 0 && move.z == 0) return;
 
 	move = VNorm(mQuaRot.PosAxis(move));
-	move = VScale(move, MOVE_SPEED * mSceneManager->GetDeltaTime());
+	move = VScale(move, move_speed * mSceneManager->GetDeltaTime());
 	mPos = VAdd(mPos, move);
 	mTargetPos = VAdd(mPos, mQuaRot.PosAxis(RELATIVE_TARGET_POS));
 
@@ -184,7 +217,7 @@ void Camera::Rotate()
 	if (angle.x == 0 && angle.y == 0) return;
 
 	angle = VNorm(angle);
-	auto rotate = ROTATE_SPEED * mSceneManager->GetDeltaTime();
+	auto rotate = rotate_speed * mSceneManager->GetDeltaTime();
 
 	angle = VGet(AsoUtility::Deg2RadF(angle.x * rotate), AsoUtility::Deg2RadF(angle.y * rotate), 0);
 	auto degree = mQuaRot.ToEuler();
@@ -200,12 +233,26 @@ void Camera::SetBeforeDrawFree()
 {
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(30.0f, 15000.0f);
+
+	// カメラの設定
+	SetCameraPositionAndTargetAndUpVec(
+		mPos,
+		mTargetPos,
+		mCameraUp
+	);
 }
 
 void Camera::SetBeforeDrawFixed()
 {
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(30.0f, 15000.0f);
+
+	// カメラの設定
+	SetCameraPositionAndTargetAndUpVec(
+		mPos,
+		mTargetPos,
+		mCameraUp
+	);
 }
 
 void Camera::SetBeforeDrawFollow()
@@ -213,14 +260,12 @@ void Camera::SetBeforeDrawFollow()
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(30.0f, 15000.0f);
 
-	if (player_ == nullptr)
+	if (player_ != nullptr)
 	{
-		return;
-	}
-		VECTOR playerPos = player_->GetTransForm().pos;
+		VECTOR playerPos = player_->GetTransform()->pos;
 
-		MATRIX playerMat = player_->GetTransForm().matPos;
-		Quaternion playerRot = player_->GetTransForm().quaRot;
+		MATRIX playerMat = player_->GetTransform()->matPos;
+		Quaternion playerRot = player_->GetTransform()->quaRot;
 
 
 
@@ -238,7 +283,15 @@ void Camera::SetBeforeDrawFollow()
 
 		mTargetPos = VAdd(mPos, relativeTargetPos);
 
-		mCameraUp = player_->GetTransForm().GetUp();
+		mCameraUp = player_->GetTransform()->GetUp();
+	}
+
+	// カメラの設定
+	SetCameraPositionAndTargetAndUpVec(
+		mPos,
+		mTargetPos,
+		mCameraUp
+	);
 }
 
 void Camera::SetBeforeDrawSpring()
@@ -246,14 +299,12 @@ void Camera::SetBeforeDrawSpring()
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraNearFar(30.0f, 15000.0f);
 
-	if (player_ == nullptr)
+	if (player_ != nullptr)
 	{
-		return;
-	}
-	VECTOR playerPos = player_->GetTransForm().pos;
+	VECTOR playerPos = player_->GetTransform()->pos;
 
-	MATRIX playerMat = player_->GetTransForm().matPos;
-	Quaternion playerRot = player_->GetTransForm().quaRot;
+	MATRIX playerMat = player_->GetTransform()->matPos;
+	Quaternion playerRot = player_->GetTransform()->quaRot;
 
 	VECTOR relativeCameraPos = {};
 
@@ -263,11 +314,11 @@ void Camera::SetBeforeDrawSpring()
 
 	VECTOR diff = VSub(mPos, idealPos);
 
-	float dampening = 2.0f * sqrtf(POW);
+	float dampening = 2.0f * sqrtf(spring_pow);
 	float delta = mSceneManager->GetDeltaTime();
 
 	VECTOR force;
-	force = VScale(diff, -POW);
+	force = VScale(diff, -spring_pow);
 	force = VSub(force, VScale(mVelocity, dampening));
 
 	mVelocity = VAdd(mVelocity, VScale(force, delta));
@@ -280,5 +331,39 @@ void Camera::SetBeforeDrawSpring()
 
 	mTargetPos = VAdd(mPos, relativeTargetPos);
 
-	mCameraUp = player_->GetTransForm().GetUp();
+	mCameraUp = player_->GetTransform()->GetUp();
+
+	}
+
+	// カメラの設定
+	SetCameraPositionAndTargetAndUpVec(
+		mPos,
+		mTargetPos,
+		mCameraUp
+	);
+}
+
+void Camera::SetBeforeDrawShake()
+{
+	stepShake_ -= mSceneManager->GetDeltaTime();
+	if (stepShake_ < 0.0f)
+	{
+		// カメラの設定
+		SetCameraPositionAndTargetAndUpVec(
+			mPos,
+			mTargetPos,
+			mCameraUp
+		);
+		mPos = defPos_;
+		ChangeMode(CAMERA_MODE::FIXED);
+		return;
+	}
+	float pow = sinf(stepShake_ * shake_speed) * shake_width;
+	mPos = VAdd(defPos_, VScale(shakeDir_, pow));
+	// カメラの設定
+	SetCameraPositionAndTargetAndUpVec(
+		mPos,
+		mTargetPos,
+		mCameraUp
+	);
 }

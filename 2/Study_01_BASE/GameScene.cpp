@@ -3,17 +3,21 @@
 #include "GameCommon.h"
 #include "KeyCheck.h"
 #include "AsoUtility.h"
-#include "SceneManager.h"
 #include "Camera.h"
 #include "GameScene.h"
 #include "SpaceDome.h"
+#include "SceneManager.h"
+
+
+#include "SpeechBalloon.h"
 #include "Stage.h"
 #include "Player.h"
 #include "RockManager.h"
-#include "ResourceManager.h"
-#include "Resource.h"
-#include "SpriteAnimator.h"
-#include "SpeechBalloon.h"
+namespace
+{
+	constexpr float RESTART_TIME = 3.0f;
+}
+
 GameScene::GameScene(SceneManager* manager) : SceneBase(manager)
 {
 }
@@ -23,11 +27,11 @@ void GameScene::Init(void)
 	mSpaceDome = new SpaceDome(mSceneManager);
 	mSpaceDome->Init();
 
-	mStage = new Stage(mSceneManager);
-	mStage->Init();
-
 	mPlayer = new Player(mSceneManager);
 	mPlayer->Init();
+
+	mStage = new Stage(mSceneManager);
+	mStage->Init();
 
 	rockManager = new RockManager(mSceneManager, mPlayer);
 	rockManager->Init();
@@ -37,45 +41,58 @@ void GameScene::Init(void)
 
 	mSpaceDome->SetPlayer(mPlayer);
 
-	resetTime_ = 0.0f;
+	playerDeadTime_ = RESTART_TIME;
 }
 
 void GameScene::Update(void)
 {
+	auto Collision = [](const int& handle,const VECTOR& center,const float& rad)
+	{
+		auto info = MV1CollCheck_Sphere(handle, -1, center, rad);
+		bool isHit = info.HitNum != 0 ? true : false;
+		MV1CollResultPolyDimTerminate(info);
+		return isHit;
+	};
 	mSpaceDome->Update();
 	mPlayer->Update();
 	rockManager->Update();
-
-	VECTOR pos = MV1GetPosition(mStage->GetModelBoss());
-	
-	if (VSquareSize(VSub(pos, mPlayer->GetTransForm().pos)) < mStage->RADIUS * mStage->RADIUS)
+	mStage->Update();
+	if (mPlayer->isAlive())
 	{
-		mSceneManager->ChangeScene(SceneManager::SCENE_ID::EVENT, true);
-	}
-	if (mPlayer->GetState() == Player::STATE::Destroy)
-	{
-		resetTime_ += mSceneManager->GetDeltaTime();
-
-		if (resetTime_ > RESTART_TIME)
+		if (Collision(mStage->GetModelDungeon(), mPlayer->GetTransform()->pos, Player::COLLISION_RADIUS))
 		{
-			mSceneManager->ChangeScene(SceneManager::SCENE_ID::GAME, true);
+			mPlayer->Dead();
 		}
 	}
 	else
 	{
-		auto info = MV1CollCheck_Sphere(mStage->GetModelDungeon(), -1,
-			mPlayer->GetTransForm().pos, Player::COLLISION_RADIUS);
-
-		if (info.HitNum > 0)
+		if (mPlayer->isEnd())
 		{
-			if (mPlayer->GetState() != Player::STATE::Destroy)
+			playerDeadTime_ -= mSceneManager->GetDeltaTime();
+			if (playerDeadTime_ <= 0.0f)
 			{
-				//mSceneManager->GetCamera()->ChangeMode(CAMERA_MODE::FOLLOW_SPRING);
-				mPlayer->SetState(Player::STATE::Destroy);
+				mSceneManager->ChangeScene(SceneManager::SCENE_ID::GAME, true);
 			}
 		}
 	}
 
+	auto pPos = mPlayer->GetTransform()->pos;
+	auto ePos = MV1GetPosition(mStage->GetModelBoss());
+
+	auto diffVec = VSub(pPos, ePos);
+
+	float diff = VSize(diffVec);
+
+	if (std::abs(diff) < mStage->RADIUS)
+	{
+		mSceneManager->ChangeScene(SceneManager::SCENE_ID::EVENT, true);
+	}
+
+	// ƒV[ƒ“‘JˆÚ
+	if (keyTrgDown[KEY_SYS_START])
+	{
+		mSceneManager->ChangeScene(SceneManager::SCENE_ID::EVENT, true);
+	}
 
 }
 
@@ -86,7 +103,9 @@ void GameScene::Draw(void)
 	mStage->Draw();
 	mPlayer->Draw();
 	rockManager->Draw();
-	mPlayer->GetSpeech()->Draw();
+
+
+	mPlayer->speechBalloon_->Draw();
 }
 
 void GameScene::Release(void)

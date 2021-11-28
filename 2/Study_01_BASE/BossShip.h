@@ -1,29 +1,34 @@
 #pragma once
+#include <vector>
 #include "Transform.h"
 
 class SceneManager;
 class Player;
 class EventShot;
+class Turret;
 
 class BossShip
 {
 public:
-	static constexpr float SPEED_MOVE = 6.0f;
-	static constexpr float EVENT_TIME = 3.0f;
-
-	enum class Boss_State
+	enum class BOSS_STATE
 	{
-		Non,
-		Event,
-		Battle,
-		Exp,
-		End,
+		NON,
+		EVENT,
+		BATTLE,
+		EXP,
+		END,
 	};
 	BossShip(SceneManager* manager, Player* player);
 	void Init(void);
 	void Update(void);
+	void UpdateTurret(void);
 	void Draw(void);
+	void DrawTurret(void);
 	void Release(void);
+
+	std::vector<Turret*> GetTurret(void);
+
+	const int& GetModelID(void);
 private:
 	SceneManager* sceneManager_;
 	Player* player_;
@@ -33,9 +38,12 @@ private:
 
 	float stepEvent_;
 
+	std::vector<Turret*> turretList_;
 
-	Boss_State state_;
+	void MakeTurret(VECTOR localPos,VECTOR localAngle);
 
-	void ChengeState(Boss_State state);
+	BOSS_STATE state_;
+
+	void ChengeState(BOSS_STATE state);
 };
 

@@ -3,11 +3,13 @@
 #include "Fader.h"
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "EventScene.h"
+#include "BattelScene.h"
 #include "Camera.h"
 #include "ResourceManager.h"
-#include "EventScene.h"
 #include "SceneManager.h"
 #include "ParticleGenerator.h"
+
 void SceneManager::Init()
 {
 
@@ -33,10 +35,6 @@ void SceneManager::Init()
 
 	// デルタタイム
 	mTickCount = std::chrono::system_clock::now();
-
-	SetFogEnable(true);
-	SetFogColor(5, 5, 5);
-	SetFogStartEnd(3000.0, 15000.0f);
 
 	// 3D用の設定
 	Init3D();
@@ -78,6 +76,10 @@ void SceneManager::Init3D(void)
 	//	{ 0.0f, 200, -500.0f },
 	//	30.0f * (DX_PI_F / 180.0f), 0.0f, 0.0f
 	//);
+
+	SetFogEnable(true);
+	SetFogColor(5, 5, 5);
+	SetFogStartEnd(3000.0f, 15000.0f);
 
 }
 
@@ -126,7 +128,7 @@ void SceneManager::Update(void)
 	// カメラ更新ステップ
 	mCamera->Update();
 
-	particleGenerator_->Update();
+	//particleGenerator_->Update();
 
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
@@ -141,7 +143,7 @@ void SceneManager::Update(void)
 	// 描画
 	mScene->Draw();
 	mCamera->Draw();
-	particleGenerator_->Draw();
+	//particleGenerator_->Draw();
 
 	switch (mSceneID)
 	{
@@ -241,6 +243,7 @@ void SceneManager::DoChangeScene(void)
 		mScene = new EventScene(this);
 		break;
 	case SCENE_ID::BATTLE:
+		mScene = new BattelScene(this);
 		break;
 	default:
 		break;

@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BattelScene.cpp" />
     <ClCompile Include="BossShip.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EventScene.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleGenerator.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerShot.cpp" />
     <ClCompile Include="RandomEngine.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -194,11 +196,13 @@
     <ClCompile Include="TextScroll.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Turret.cpp" />
     <ClCompile Include="_debug\_DebugConOut.cpp" />
     <ClCompile Include="_debug\_DebugDispOut.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="BattelScene.h" />
     <ClInclude Include="BossShip.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EventScene.h" />
@@ -206,6 +210,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleGenerator.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerShot.h" />
     <ClInclude Include="RandomEngine.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -229,6 +234,7 @@
     <ClInclude Include="TextScroll.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Turret.h" />
     <ClInclude Include="_debug\_DebugConOut.h" />
     <ClInclude Include="_debug\_DebugDispOut.h" />
   </ItemGroup>

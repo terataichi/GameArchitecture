@@ -9,7 +9,8 @@ enum class CAMERA_MODE
 	FREE,
 	FIXED,
 	FOLLOW,
-	FOLLOW_SPRING
+	FOLLOW_SPRING,
+	SHAKE
 };
 
 class SceneManager;
@@ -17,10 +18,9 @@ class Player;
 
 class Camera
 {
+
 public:
-	static constexpr float MOVE_SPEED = 500.0f;
-	static constexpr float ROTATE_SPEED = 90.0f;
-	static constexpr float POW = 50.0f;
+
 	// カメラの初期座標
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };
 
@@ -72,6 +72,10 @@ private:
 	// カメラ角度
 	Quaternion mQuaRot;
 
+	float stepShake_;
+	VECTOR defPos_;
+	VECTOR shakeDir_;
+
 	void Move();
 	void Rotate();
 
@@ -79,5 +83,6 @@ private:
 	void SetBeforeDrawFixed();
 	void SetBeforeDrawFollow();
 	void SetBeforeDrawSpring();
+	void SetBeforeDrawShake();
 };
 
