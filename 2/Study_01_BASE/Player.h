@@ -60,6 +60,8 @@ private:
 
 	PLAYER_STATE state_;
 
+	float boostTime_ = 0.0f;
+	float boostInterval_ = 0.0f;
 	bool isAlive_;
 };
 

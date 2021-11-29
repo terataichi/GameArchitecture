@@ -5,7 +5,8 @@
 #include "Turret.h"
 #include "Player.h"
 #include "AsoUtility.h"
-
+#include "ResourceManager.h"
+#include "Resource.h"
 namespace
 {
 	constexpr float SPEED_MOVE = 4.0f;
@@ -19,6 +20,8 @@ BossShip::BossShip(SceneManager* manager, Player* player) :
 
 void BossShip::Init(void)
 {
+	deathImage_ = LoadGraph("Image/EndLogo.png");
+
 	VECTOR pos = { 0.0f,0.0f,4000.0f };
 	transform_.SetModel(MV1LoadModel("Model/BossShip/BossShip.mv1"));
 	transform_.scl = { 2.0f,2.0f,2.0f };
@@ -35,7 +38,7 @@ void BossShip::Init(void)
 		{ -4.5f, 5.5f, 7.8f },
 		{ 0.0f, 0.0f, AsoUtility::Deg2RadF(18.0f) });
 
-	// ‰¡
+	// ‰¡B
 	MakeTurret(
 		{ 4.5f, 5.5f, 0.0f },
 		{ AsoUtility::Deg2RadF(20.0f), AsoUtility::Deg2RadF(90.0f), 0.0f });
@@ -72,6 +75,15 @@ void BossShip::Update(void)
 {
 	switch (state_)
 	{
+	case BOSS_STATE::EXP:
+
+		endTime_ += sceneManager_->GetDeltaTime();
+		if (endTime_ >= 5.0f)
+		{
+			sceneManager_->ChangeScene(SceneManager::SCENE_ID::TITLE, true);
+		}
+
+		break;
 	case BOSS_STATE::EVENT:
 		auto nor = VNorm(transform_.GetForward());
 		auto moveVec = VScale(nor, SPEED_MOVE);
@@ -96,6 +108,15 @@ void BossShip::Update(void)
 		Quaternion que = Quaternion::AngleAxis(speed, AsoUtility::AXIS_Y);
 		transform_.quaRot = Quaternion::Mult(transform_.quaRot, que);
 		UpdateTurret();
+
+		bool active = false;
+		for (auto& t : turretList_)
+		{
+			active |= t->IsAlive();
+		}
+
+		if (!active)ChengeState(BOSS_STATE::EXP);
+
 		break;
 	}
 	transform_.Update();
@@ -113,6 +134,12 @@ void BossShip::UpdateTurret(void)
 
 void BossShip::Draw(void)
 {
+	int num = MV1GetMaterialNum(transform_.modelId);
+	COLOR_F cFrom{ 1.0f,1.0f,1.0f,1.0f };
+	COLOR_F cTo{ 1.0f,0.1f,0.1f,0.0f };
+	int x, y = 0;
+	GetDrawScreenSize(&x, &y);
+
 	switch (state_)
 	{
 	case BOSS_STATE::EVENT:
@@ -124,7 +151,16 @@ void BossShip::Draw(void)
 		MV1DrawModel(transform_.modelId);
 		DrawTurret();
 		break;
-	case BOSS_STATE::EXP:
+	case BOSS_STATE::EXP:                
+		t += sceneManager_->GetDeltaTime();
+		auto c = AsoUtility::Lerp(cFrom, cTo, t);
+
+		for (int i = 0; i < num; i++)
+		{
+			MV1SetMaterialDifColor(transform_.modelId, i, c);
+		}
+		MV1DrawModel(transform_.modelId);
+		DrawGraph(x / 2 - x / 4, y / 3, deathImage_, true);
 		break;
 	default:
 		break;

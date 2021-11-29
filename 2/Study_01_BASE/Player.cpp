@@ -25,6 +25,10 @@ Player::Player(SceneManager* manager)
 
 void Player::Init(void)
 {
+	boostTime_ = 0.0f;
+	boostInterval_ = 0.0f;
+
+
 	mTransform.SetModel(MV1LoadModel("Model/PlayerShip/PlayerShip.mv1"));
 	float scale = 10.0;
 	mTransform.scl = { scale,scale,scale };
@@ -64,7 +68,27 @@ void Player::Update(void)
 		ProcessTurn();
 		VECTOR forward = VNorm(mTransform.GetForward());
 
+		if (CheckHitKey(KEY_INPUT_B))
+		{
+			if (boostTime_ <= 0.0f && boostInterval_ <= 0.0f)
+			{
+				boostTime_ = 3.0f;
+			}
+		}
+
 		VECTOR moveVec = VScale(forward, MOVE_POW);
+		if (boostTime_ >= 0.0f)
+		{
+			moveVec = VScale(forward, MOVE_POW * 2.0f);
+
+			boostTime_ -= mSceneManager->GetDeltaTime();
+			if (boostTime_ <= 0.0f)
+			{
+				boostInterval_ = 3.0f;
+			}
+		}
+		boostInterval_ -= mSceneManager->GetDeltaTime();
+
 
 		mTransform.pos = VAdd(mTransform.pos, moveVec);
 

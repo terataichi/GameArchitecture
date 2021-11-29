@@ -3,6 +3,7 @@
 #include "Transform.h"
 class SceneManager;
 class SpriteAnimator;
+class TurretShot;
 
 class Turret
 {
@@ -31,6 +32,8 @@ public:
 	// –Cgƒ[ƒJƒ‹‰Ò“­—Ê(deg)
 	static constexpr float ANGLE_POW_GUN = 0.2f;
 
+	static constexpr float SHOT_TIME = 0.05f;
+
 	enum class STATE
 	{
 		NONE,
@@ -55,6 +58,7 @@ public:
 	VECTOR GetPos(void);
 	void Damage(void);
 
+	std::vector<TurretShot*> GetShot();
 private:
 
 	SceneManager* mSceneManager;
@@ -105,4 +109,6 @@ private:
 	// ó‘Ô‘JˆÚ
 	void ChangeState(STATE state);
 
+	float shotTime_;
+	std::vector<TurretShot*> shot_;
 };

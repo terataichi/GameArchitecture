@@ -45,5 +45,10 @@ private:
 	BOSS_STATE state_;
 
 	void ChengeState(BOSS_STATE state);
+
+	float t = 0.0f;
+	int deathImage_; 
+
+	float endTime_ = 0.0f;
 };
 

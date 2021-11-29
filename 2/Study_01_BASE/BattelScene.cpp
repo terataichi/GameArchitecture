@@ -9,7 +9,9 @@
 #include "RockManager.h"
 #include "BossShip.h"
 #include "SpaceDome.h"
-
+#include "Turret.h"
+#include "TurretShot.h"
+#include "AsoUtility.h"
 namespace
 {
 	constexpr float RESTART_TIME = 3.0f;
@@ -66,6 +68,7 @@ void BattelScene::Update(void)
 			player_  ->Dead();
 		}
 		MV1CollResultPolyDimTerminate(info);
+
 	}
 	else
 	{
@@ -79,12 +82,53 @@ void BattelScene::Update(void)
 		}
 	}
 	auto shots = player_->GetShots();
+	auto turret = boss_->GetTurret();
 
 	for (auto shot : shots)
 	{
 		if (Collision(boss_->GetModelID(), shot->GetPos(), PlayerShot::COLLISION_RADIUS))
 		{
 			shot->CreateExplosion();
+		}
+
+		for (auto& t : turret)
+		{
+			if (!t->IsAlive())
+			{
+				continue;
+			}
+
+			if (AsoUtility::IsHitSpheres(t->GetPos(),
+				t->COLLISION_RADIUS,
+				shot->GetPos(),
+				shot->GetCollisionRadius()))
+			{
+				t->Damage();
+				shot->CreateExplosion();
+				break;
+			}
+		}
+	}
+
+	for (auto& t : turret)
+	{
+		auto tShot = t->GetShot();
+		for (auto s : tShot)
+		{
+			if (!s->IsAlive())
+			{
+				continue;
+			}
+
+			if (AsoUtility::IsHitSpheres(player_->GetTransform()->pos,
+				Player::COLLISION_RADIUS,
+				s->GetPos(),
+				s->GetCollisionRadius()))
+			{
+
+				player_->Dead();
+			}
+
 		}
 	}
 }
@@ -95,6 +139,7 @@ void BattelScene::Draw(void)
 	boss_->Draw();
 	player_->Draw();
 	rockManager_->Draw();
+
 }
 
 void BattelScene::Release(void)

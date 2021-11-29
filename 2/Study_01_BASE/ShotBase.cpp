@@ -57,7 +57,7 @@ void ShotBase::Update(void)
 	// 着弾時のエフェクト
 	mExplosion->Update();
 
-	if (!CheckAlive())
+	if (!CheckAlive() || !IsAlive())
 	{
 		return;
 	}

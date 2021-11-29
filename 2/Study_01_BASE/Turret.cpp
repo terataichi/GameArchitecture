@@ -8,7 +8,7 @@
 #include "Resource.h"
 #include "ResourceManager.h"
 #include "Turret.h"
-
+#include "TurretShot.h"
 Turret::Turret(SceneManager* manager,
 	Transform* transformPlayer,
 	Transform* transformParent,
@@ -85,6 +85,7 @@ void Turret::Init(void)
 	// –Cgƒ[ƒJƒ‹‰Ò“­—Ê(deg)
 	mAnglePowGun = ANGLE_POW_GUN;
 
+	shotTime_ = SHOT_TIME;
 }
 
 void Turret::Update(void)
@@ -100,14 +101,26 @@ void Turret::Update(void)
 		float deg;
 
 		// –C‘äƒ[ƒJƒ‹‰ñ“]
-
+		mLocalAddAxisStand.y += mAnglePowStand * mSceneManager->GetDeltaTime();
+		if (AsoUtility::Rad2DegF(mLocalAddAxisStand.y) <= ANGLE_Y_MIN_STAND || AsoUtility::Rad2DegF(mLocalAddAxisStand.y) >= ANGLE_Y_MAX_STAND)
+		{
+			mAnglePowStand *= -1;
+		}
 		// –C‘ä
 		SyncParent(&mTransformStand, mLocalAddAxisStand);
 
-		// –Cgƒ[ƒJƒ‹‰ñ“]
-		
+		// –C‘äƒ[ƒJƒ‹‰ñ“]
+		mLocalAddAxisGun.x += mAnglePowGun * mSceneManager->GetDeltaTime();
+		if (AsoUtility::Rad2DegF(mLocalAddAxisGun.x) <= ANGLE_X_MIN_GUN || AsoUtility::Rad2DegF(mLocalAddAxisGun.x) >= ANGLE_X_MAX_GUN)
+		{
+			mAnglePowGun *= -1;
+		}
 		// –Cg
-		//SyncParent(&mTransformGun, mix.ToEuler());
+		Quaternion stand = Quaternion::Euler(mLocalAddAxisStand);
+		Quaternion gun = Quaternion::Euler(mLocalAddAxisGun);
+		Quaternion mix = stand.Mult(gun);
+
+		SyncParent(&mTransformGun, mix.ToEuler());
 
 		// ”íƒ_ƒ”»’è
 		if (mStepDamaged > 0.0f)
@@ -115,6 +128,24 @@ void Turret::Update(void)
 			mStepDamaged -= mSceneManager->GetDeltaTime();
 		}
 
+		shotTime_ -= mSceneManager->GetDeltaTime();
+		if (shotTime_ <= 0.0f)
+		{
+			shotTime_ = SHOT_TIME;
+
+			TurretShot* shot = new TurretShot(mSceneManager, &mTransformGun);
+
+			VECTOR localPos = Quaternion::PosAxis(
+				mTransformGun.quaRot, { 0.0f,2.0f,3.0f }
+			);
+			VECTOR pos = VAdd(mTransformGun.pos, VScale(localPos, SCALE));
+
+			VECTOR dir = mTransformGun.GetForward();
+
+			shot->Create(pos, dir);
+
+			shot_.emplace_back(std::move(shot));
+		}
 	}
 		break;
 	case Turret::STATE::DESTROY:
@@ -124,6 +155,10 @@ void Turret::Update(void)
 		break;
 	}
 
+	for (auto& s : shot_)
+	{
+		s->Update();
+	}
 }
 
 void Turret::Draw(void)
@@ -154,12 +189,17 @@ void Turret::Draw(void)
 			DrawSphere3D(mTransformStand.pos, COLLISION_RADIUS, 10, 0xff0000, 0xffffff, false);
 		}
 
+
 		break;
 	case Turret::STATE::DESTROY:
 		mExplosion->Draw();
 		break;
 	}
 
+	for (auto& s : shot_)
+	{
+		s->Draw();
+	}
 }
 
 void Turret::Release(void)
@@ -177,8 +217,18 @@ void Turret::SyncParent(Transform* transform, VECTOR addAxis)
 	localPos = Quaternion::PosAxis(transform->quaRot, mLocalPos);
 	transform->pos = VAdd(mTransformParent->pos, VScale(localPos, SCALE));
 
-	transform->Update();
+	// Žq‹Ÿ‚Ì‰ñ“]
+	//Quaternion localRot = Quaternion::Euler(mLocalAddAxis);
+	//transform->quaRot = transform->quaRot.Mult(localRot);
 
+	// ‚³‚ç‚É‰ñ“](–C‘ä‚Í‰•œ‚ÌY‰ñ“]A–Cg‚ÍX)
+	Quaternion localRot = Quaternion::Euler(mLocalAddAxisStand);
+	mTransformStand.quaRot = transform->quaRot.Mult(localRot);
+
+	localRot = Quaternion::Euler(mLocalAddAxisGun);
+	mTransformGun.quaRot = transform->quaRot.Mult(localRot);
+
+	transform->Update();
 }
 
 bool Turret::IsAlive(void)
@@ -202,6 +252,11 @@ void Turret::Damage(void)
 		ChangeState(STATE::DESTROY);
 	}
 
+}
+
+std::vector<TurretShot*> Turret::GetShot()
+{
+	return shot_;
 }
 
 void Turret::ChangeState(STATE state)
