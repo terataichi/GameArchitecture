@@ -1,15 +1,122 @@
-﻿  BattelScene.cpp
+﻿  Application.cpp
+  BattelScene.cpp
 C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
   BossShip.cpp
 C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
   Camera.cpp
 C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
-  GameScene.cpp
+  EventScene.cpp
+  EventShot.cpp
+  Particle.cpp
+  ParticleGenerator.cpp
 C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\ParticleGenerator.cpp(112,15): warning C4305: '+=': 'double' から 'float' へ切り詰めます。
   Player.cpp
 C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+  PlayerShot.cpp
+  RandomEngine.cpp
+  Resource.cpp
+  ResourceManager.cpp
+  Fader.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Fader.cpp(45,24): warning C4244: '+=': 'const float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Fader.cpp(56,24): warning C4244: '-=': 'const float' から 'int' への変換です。データが失われる可能性があります。
+  GameCommon.cpp
+  IntVector3.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\IntVector3.cpp(22,7): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\IntVector3.cpp(23,7): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\IntVector3.cpp(24,7): warning C4244: '=': 'float' から 'int' への変換です。データが失われる可能性があります。
+  KeyCheck.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\KeyCheck.cpp(65,31): warning C4804: '~': 演算中の 'bool' 型の使用方法が安全ではありません
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\KeyCheck.cpp(65,31): warning C4805: '&': 演算中の 'bool' 型と 'int' 型の混用は安全ではありません
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\KeyCheck.cpp(66,17): warning C4804: '~': 演算中の 'bool' 型の使用方法が安全ではありません
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\KeyCheck.cpp(66,38): warning C4805: '&': 演算中の 'int' 型と 'bool' 型の混用は安全ではありません
+  main.cpp
+  Quaternion.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(124,19): warning C4244: '*=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(125,19): warning C4244: '*=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(126,19): warning C4244: '*=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(167,17): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(168,18): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(169,18): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(183,15): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(184,15): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(185,15): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(186,15): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(195,16): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(196,16): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(197,42): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(198,42): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(200,16): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(201,16): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(202,42): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(203,42): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(205,16): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(206,16): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(207,42): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(208,42): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(312,13): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(381,53): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(386,41): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(392,45): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(400,45): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(434,41): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(435,37): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Quaternion.cpp(448,16): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
+  Rock.cpp
+  コードを生成中...
+  コンパイル中...
   RockManager.cpp
+  SceneBase.cpp
+  SceneManager.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SceneManager.cpp(207,9): warning C4244: 'return': 'double' から 'float' への変換です。データが失われる可能性があります。
+  GameScene.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+  AsoUtility.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(46,17): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(56,17): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(106,12): warning C4244: 'return': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(152,12): warning C4244: 'return': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(174,16): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(178,19): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(187,19): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(195,19): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(212,35): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(213,35): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(214,35): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(215,35): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(223,13): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.cpp(224,13): warning C4244: '初期化中': 'double' から 'float' への変換です。データが失われる可能性があります。
+  ShotBase.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\ShotBase.cpp(18,50): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
   SpaceDome.cpp
 C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+  SpeechBalloon.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpeechBalloon.cpp(62,32): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpeechBalloon.cpp(62,24): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpeechBalloon.cpp(73,29): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpeechBalloon.cpp(73,21): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpeechBalloon.cpp(74,43): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpeechBalloon.cpp(74,27): warning C4244: '引数': 'float' から 'int' への変換です。データが失われる可能性があります。
+  SpriteAnimator.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\SpriteAnimator.cpp(20,10): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+  Stage.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Stage.cpp(42,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+  TextScroll.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(18,71): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(19,65): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(27,28): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\TextScroll.cpp(77,25): warning C4267: '初期化中': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+  TitleScene.cpp
+  Transform.cpp
+  Turret.cpp
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\AsoUtility.h(71,2): warning C4091: 'static ': 変数が何も宣言されていないときは、'AsoUtility' の左辺を無視します。
+C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\Turret.cpp(101,9): warning C4101: 'deg': ローカル変数は 1 度も使われていません。
+  TurretShot.cpp
+  _DebugConOut.cpp
+  _DebugDispOut.cpp
   コードを生成中...
   BaseProject.vcxproj -> C:\Users\1916025\Desktop\GameArchitecture\2\Study_01_BASE\x64\Debug\BaseProject.exe
